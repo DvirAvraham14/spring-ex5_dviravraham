@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <title>Hello</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
 </head>
 <body>
+<div th:fragment="logout" class="logout" sec:authorize="isAuthenticated()">
+    Logged user: <span sec:authentication="name">?</span> |
+    Roles: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span> |
+    <!--/* When using CSRF this needs to be a POST */-->
+    <form th:action="@{/logout}" method="post" style="display:inline">
+        <input type="submit" value="Logout"/>
+    </form>
+</div>
+
 <h1 th:text="${greeting}"></h1>
     <p>This is a test page.</p>
     <p>Delete it from your repo before submission!</p>
