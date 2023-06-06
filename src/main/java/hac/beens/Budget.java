@@ -1,10 +1,8 @@
 package hac.beens;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
-import org.springframework.format.annotation.DateTimeFormat;
-import java.time.LocalDate;
 
 
 @Entity
@@ -12,7 +10,7 @@ import java.time.LocalDate;
 public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long budgetId;
+    private Long id;
 
     @NotEmpty(message = "Username is mandatory")
     private String username;
@@ -22,6 +20,7 @@ public class Budget {
 
     @NotEmpty(message = "Amount is mandatory")
     @PositiveOrZero(message = "Amount must be positive")
+    @Column(name = "monthly_limit")
     private double monthlyLimit;
 
     public Budget() {
@@ -33,12 +32,12 @@ public class Budget {
         this.monthlyLimit = monthlyLimit;
     }
 
-    public Long getBudgetId() {
-        return budgetId;
+    public Long getId() {
+        return id;
     }
 
-    public void setBudgetId(Long budgetId) {
-        this.budgetId = budgetId;
+    public void setId(Long budgetId) {
+        this.id = budgetId;
     }
 
     public String getUser() {

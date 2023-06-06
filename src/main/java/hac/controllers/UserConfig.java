@@ -54,17 +54,16 @@ public class UserConfig {
                 .csrf(withDefaults())
 
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/static/**", "/static/css/**", "/", "/403", "/errorpage", "/simulateError").permitAll()
+                        .requestMatchers("/", "/css/**", "/403", "/errorpage").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
-
                 )
                 .formLogin((form) -> form
-                        //.loginPage("/login")
-                               .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/", true)
-                               .failureUrl("/login?failure")
-                                .permitAll()
+                        .loginPage("/login")
+                        //.loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/", true)
+                        //.failureUrl("/login?failure")
+                        .permitAll()
                 )
                 .logout((logout) -> logout.permitAll())
                 .exceptionHandling(
@@ -73,7 +72,6 @@ public class UserConfig {
                 );
 
         return http.build();
-
     }
 
 }

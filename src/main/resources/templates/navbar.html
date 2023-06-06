@@ -1,0 +1,49 @@
+<nav th:fragment="navbar" class="navbar navbar-expand-md navbar-dark bg-dark">
+
+    <div class="container-fluid">
+        <a class="navbar-brand" href="../" th:href="@{/}">FinTrack</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" th:href="@{/login}">Login</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" href="#">Pag1</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" href="#">Page2</a>
+                </li>
+                <li class="nav-item"
+                    th:if="${#authorization.expression('isAuthenticated()') and #authorization.expression('hasRole(''ADMIN'')')}">
+                    <a class="nav-link" href="#">admin pages</a>
+                </li>
+            </ul>
+            <span class="navbar-text">
+                <th:block th:if="${#authorization.expression('isAuthenticated()')}">
+                    Welcome back <span th:text="${#authentication.principal.username}"></span>
+                    <form th:action="@{/logout}" method="post" style="display:inline">
+                      <input type="hidden" value="Logout"/>
+                      <a href="javascript:;" onclick="parentNode.submit();">Logout</a>
+                    </form>
+                </th:block>
+            </span>
+        </div>
+    </div>
+
+</nav>
+
+<!--<div th:fragment="logout" class="logout" sec:authorize="isAuthenticated()">-->
+<!--    Logged user: <span sec:authentication="name">?</span> |-->
+<!--    &lt;!&ndash;/* When using CSRF this needs to be a POST */&ndash;&gt;-->
+<!--    <form th:action="@{/logout}" method="post" style="display:inline">-->
+<!--        <input type="hidden" value="Logout"/>-->
+<!--        <a href="javascript:;" onclick="parentNode.submit();">Logout</a>-->
+<!--    </form>-->
+<!--</div>-->

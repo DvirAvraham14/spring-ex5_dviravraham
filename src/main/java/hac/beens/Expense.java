@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
 @Entity
@@ -12,7 +13,7 @@ public class Expense {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long expenseId;
+    private Long id;
 
     @NotEmpty(message = "Username is mandatory")
     private String username;
@@ -40,12 +41,12 @@ public class Expense {
         this.notes = notes;
     }
 
-    public Long getExpenseId() {
-        return expenseId;
+    public Long getId() {
+        return id;
     }
 
-    public void setExpenseId(Long expenseId) {
-        this.expenseId = expenseId;
+    public void setId(Long expenseId) {
+        this.id = expenseId;
     }
 
     public String getUser() {
