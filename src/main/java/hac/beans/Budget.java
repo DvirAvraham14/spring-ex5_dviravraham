@@ -1,4 +1,4 @@
-package hac.beens;
+package hac.beans;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;

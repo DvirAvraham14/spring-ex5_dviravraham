@@ -9,11 +9,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+@EnableWebMvc
 @Configuration
 public class UserConfig {
+
+
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder bCryptPasswordEncoder) {
@@ -54,9 +58,11 @@ public class UserConfig {
                 .csrf(withDefaults())
 
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/css/**", "/403", "/errorpage").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasRole("USER")
+//                        .requestMatchers("/", "/css/**", "/403", "/errorpage", "/expense/**", "/budget", "/goal").permitAll()
+//                        .requestMatchers("/api/**").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/user/**").hasRole("USER")
+                                .requestMatchers("/**", "/expense").permitAll()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
