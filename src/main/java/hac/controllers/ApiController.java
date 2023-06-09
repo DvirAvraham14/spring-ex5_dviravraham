@@ -9,6 +9,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
+@Controller
 @RequestMapping("/api")
 public class ApiController {
 
@@ -35,17 +36,17 @@ public class ApiController {
         return "index";
     }
 
-//    // expense section
-//    @PostMapping("/expense")
-//    public String addExpense(@Valid @RequestBody Expense expense, BindingResult result, Model model) {
-//        if (result.hasErrors()) {
-//            //userInfo.setId(id);
-//            return "login";
-//        }
-//        System.out.println(expense);
-//        expenseRepository.save(expense);
-//        return "Expense";
-//    }
+    // expense section
+    @RequestMapping(value = "/expense", consumes = "application/x-www-form-urlencoded", produces = "application/json")
+    public String addExpense(@Valid Expense expense, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            //userInfo.setId(id);
+            return "login";
+        }
+        System.out.println("dsfgthyjudsfgb   "+expense);
+        expenseRepository.save(expense);
+        return "redirect:/";
+    }
 //
 //    @GetMapping("/expense")
 //    public Iterable<Expense> getExpenses() {

@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
@@ -58,16 +59,16 @@ public class Main {
     private GoalRepository goalRepository;
 
     // expense section
-    @PostMapping("/expenseAdd")
-    public String addExpense(@Valid Expense expense, BindingResult result, Principal principal) {
-        if (result.hasErrors()) {
-            //userInfo.setId(id);
-            return "redirect:/expense";
-        }
-        System.out.println(principal.getName());
-        expenseRepository.save(expense);
-        return "index";
-    }
+//    @PostMapping("/expense")
+//    public String addExpense(@RequestParam(required = false) @RequestBody Expense expense, BindingResult result, Principal principal) {
+//        if (result.hasErrors()) {
+//            //userInfo.setId(id);
+//            return "login";
+//        }
+//        System.out.println(principal.getName());
+//        expenseRepository.save(expense);
+//        return "Expense";
+//    }
 
     @GetMapping("/expense")
     public Iterable<Expense> getExpenses(Expense expense) {

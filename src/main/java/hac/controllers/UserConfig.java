@@ -13,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@EnableWebMvc
 @Configuration
 public class UserConfig {
 
@@ -22,16 +21,16 @@ public class UserConfig {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder bCryptPasswordEncoder) {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("user1")
-                .password(bCryptPasswordEncoder.encode("password"))
+        manager.createUser(User.withUsername("1")
+                .password(bCryptPasswordEncoder.encode("1"))
                 .roles("USER")
                 .build());
-        manager.createUser(User.withUsername("user2")
-                .password(bCryptPasswordEncoder.encode("password"))
+        manager.createUser(User.withUsername("2")
+                .password(bCryptPasswordEncoder.encode("2"))
                 .roles("USER")
                 .build());
-        manager.createUser(User.withUsername("user3")
-                .password(bCryptPasswordEncoder.encode("password"))
+        manager.createUser(User.withUsername("3")
+                .password(bCryptPasswordEncoder.encode("3"))
                 .roles("USER")
                 .build());
         manager.createUser(User.withUsername("admin")
@@ -54,16 +53,15 @@ public class UserConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())
-                .csrf(withDefaults())
+//                .cors(withDefaults())
+//                .csrf(withDefaults())
 
                 .authorizeHttpRequests((requests) -> requests
-//                        .requestMatchers("/", "/css/**", "/403", "/errorpage", "/expense/**", "/budget", "/goal").permitAll()
-//                        .requestMatchers("/api/**").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/user/**").hasRole("USER")
-                                .requestMatchers("/**", "/expense").permitAll()
-                )
+                        .requestMatchers("/**", "/css/**", "/403", "/errorpage", "/expense/**", "/budget", "/goal").permitAll()
+                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasRole("USER")
+                            )
                 .formLogin((form) -> form
                         .loginPage("/login")
                         //.loginProcessingUrl("/login")

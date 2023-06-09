@@ -8,24 +8,24 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "expenses")
+@Table(name = "expense")
 public class Expense {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Username is mandatory")
-    private String username;
+//    @NotEmpty(message = "Username is mandatory")
+//    private String username;
 
-    @NotEmpty(message = "Category is mandatory")
+//    @NotEmpty(message = "Category is mandatory")
     private String category;
-
-    @NotEmpty(message = "Amount is mandatory")
-    @Positive(message = "Amount must be positive")
+//
+//    @NotEmpty(message = "Amount is mandatory")
+//    @Positive(message = "Amount must be positive")
     private double amount;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     private String notes;
@@ -34,7 +34,7 @@ public class Expense {
     }
 
     public Expense(String username, String category, double amount, LocalDate date, String notes) {
-        this.username = username;
+//        this.username = username;
         this.category = category;
         this.amount = amount;
         this.date = date;
@@ -49,13 +49,13 @@ public class Expense {
         this.id = expenseId;
     }
 
-    public String getUser() {
-        return this.username;
-    }
+//    public String getUser() {
+//        return this.username;
+//    }
 
-    public void setUser(String username) {
-        this.username = username;
-    }
+//    public void setUser(String username) {
+//        this.username = username;
+//    }
 
     public String getCategory() {
         return category;
