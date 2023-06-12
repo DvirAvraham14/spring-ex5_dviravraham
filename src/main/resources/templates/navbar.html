@@ -15,7 +15,10 @@
                     <a class="nav-link" th:href="@{/login}">Login</a>
                 </li>
                 <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
-                    <a class="nav-link" th:href="@{/expense}">Expense</a>
+                    <a class="nav-link" th:href="@{/budgetHome}">NewBudget</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link" th:href="@{/expenseHome}">Expense</a>
                 </li>
                 <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
                     <a class="nav-link" th:href="@{/budget}">Budget</a>

@@ -12,15 +12,15 @@ public class Budget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Username is mandatory")
+//    @NotEmpty(message = "Username is mandatory")
     private String username;
 
-    @NotEmpty(message = "Category is mandatory")
+//    @NotEmpty(message = "Category is mandatory")
     private String category;
 
-    @NotEmpty(message = "Amount is mandatory")
-    @PositiveOrZero(message = "Amount must be positive")
-    @Column(name = "monthly_limit")
+//    @NotEmpty(message = "Amount is mandatory")
+//    @PositiveOrZero(message = "Amount must be positive")
+//    @Column(name = "monthly_limit")
     private double monthlyLimit;
 
     public Budget() {

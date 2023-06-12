@@ -1,6 +1,7 @@
 package hac.controllers;
 
 import ch.qos.logback.core.model.Model;
+import hac.beans.Budget;
 import hac.beans.Expense;
 import hac.beans.repo.BudgetRepository;
 import hac.beans.repo.ExpenseRepository;
@@ -15,6 +16,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,15 +39,15 @@ public class ApiController {
     }
 
     // expense section
-    @RequestMapping(value = "/expense", consumes = "application/x-www-form-urlencoded", produces = "application/json")
-    public String addExpense(@Valid Expense expense, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            //userInfo.setId(id);
-            return "login";
-        }
-        System.out.println("dsfgthyjudsfgb   "+expense);
+    //@PostMapping("/expense")
+    @RequestMapping(value = "/expense", consumes = "application/x-www-form-urlencoded", produces = "application/json", method = RequestMethod.POST)
+    public String addExpense(@Valid Expense expense, BindingResult result, Model model, Principal principal) {
+//        if (result.hasErrors()) {
+//            return "Expense";
+//        }
+        expense.setUser(principal.getName());
         expenseRepository.save(expense);
-        return "redirect:/";
+        return "redirect:/expenseHome";
     }
 //
 //    @GetMapping("/expense")
@@ -55,13 +57,42 @@ public class ApiController {
 
 
     // budget section
+
+    //@PostMapping("/budget")
+    @RequestMapping(value = "/budget", consumes = "application/x-www-form-urlencoded", produces = "application/json", method = RequestMethod.POST)
+    public String addBudget(@Valid Budget budget, BindingResult result, Model model, Principal principal) {
+        if (result.hasErrors()) {
+            return "index";
+        }
+        budget.setUser(principal.getName());
+        budgetRepository.save(budget);
+        return "redirect:/budgetHome";
+    }
+
+    //@PostMapping("/deleteBudget/{id}")
+//    @RequestMapping(value = "/deleteBudget/{id}", consumes = "application/x-www-form-urlencoded", produces = "application/json", method = RequestMethod.DELETE)
 //
-//    @PostMapping("/budget")
-//    public String addBudget(Budget budget) {
-//        budgetRepository.save(budget);
-//        return "Budget";
+//    public String deleteBudget(@PathVariable("id") Long id) {
+//        // Delete the budget item with the given ID
+//        budgetRepository.deleteById(id);
+//
+//        return "budgetHome";
 //    }
+
+
 //
+
+//    @PostMapping("/budget")
+//    public String addBudget(@RequestParam("category") String category, @RequestParam("budget") double budget, Model model, Principal principal) {
+//        // Create a new budget item for the current user and save it
+//        Budget budgetItem = new Budget();
+//        budgetItem.setUser(principal.getName());
+//        budgetItem.setCategory(category);
+//        budgetItem.setMonthlyLimit(budget);
+//        budgetRepository.save(budgetItem);
+//
+//        return "redirect:/budget";
+//    }
 //    @GetMapping("/budget")
 //    public Iterable<Budget> getBudgets() {
 //        return budgetRepository.findAll();
