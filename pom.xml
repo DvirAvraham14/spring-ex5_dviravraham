@@ -50,6 +50,7 @@
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
             <version>2.6.7</version>
         </dependency>
+        <!-- uncomment this if you wish to user SQL session store - ALSO uncomment the application.properties line -->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-jdbc</artifactId>
@@ -62,11 +63,11 @@
         </dependency>
 
         <!-- uncomment this if you are using h2 (in memory database) and comment out the dependency com.mysql above -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.h2database</groupId>-->
+        <!--            <artifactId>h2</artifactId>-->
+        <!--            <scope>runtime</scope>-->
+        <!--        </dependency>-->
 
 
         <dependency>
@@ -90,19 +91,12 @@
         </dependency>
         <!-- end of spring security dependencies -->
 
-        <!--  optional: to enable live reload  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-
 
     </dependencies>
 

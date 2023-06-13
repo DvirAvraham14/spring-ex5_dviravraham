@@ -9,9 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+
 
 @Configuration
 public class UserConfig {
@@ -37,10 +37,6 @@ public class UserConfig {
                 .password(bCryptPasswordEncoder.encode("password"))
                 .roles("ADMIN")
                 .build());
-        manager.createUser(User.withUsername("useradmin")
-                .password(bCryptPasswordEncoder.encode("password"))
-                .roles("USER", "ADMIN")
-                .build());
         return manager;
     }
 
@@ -53,19 +49,19 @@ public class UserConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-//                .cors(withDefaults())
-//                .csrf(withDefaults())
+                .cors(withDefaults())
+                .csrf(withDefaults())
 
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/**", "/css/**", "/403", "/errorpage", "/expense/**", "/budget", "/goal", "/add-expense").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/", "/css/**", "/403", "/errorpage").permitAll()
+                                .requestMatchers("/expense/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/budget/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/**").hasRole("ADMIN")
                             )
                 .formLogin((form) -> form
                         .loginPage("/login")
                         //.loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
+//                        .defaultSuccessUrl("/", true)
                         //.failureUrl("/login?failure")
                         .permitAll()
                 )

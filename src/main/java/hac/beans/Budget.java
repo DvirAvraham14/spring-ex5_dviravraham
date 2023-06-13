@@ -1,8 +1,14 @@
 package hac.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.PositiveOrZero;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.security.Principal;
 
 
 @Entity
@@ -12,24 +18,25 @@ public class Budget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @NotEmpty(message = "Username is mandatory")
+    @JsonIgnore
     private String username;
 
-//    @NotEmpty(message = "Category is mandatory")
+    @NotEmpty(message = "Category is mandatory")
     private String category;
 
-//    @NotEmpty(message = "Amount is mandatory")
-//    @PositiveOrZero(message = "Amount must be positive")
-//    @Column(name = "monthly_limit")
+    @PositiveOrZero(message = "Amount must be positive")
     private double monthlyLimit;
+
+    @DateTimeFormat(pattern = "MM-yyyy")
+    private String month;
 
     public Budget() {
     }
 
-    public Budget(String user, String category, double monthlyLimit) {
-        this.username = user;
+    public Budget(String category, double monthlyLimit, String month) {
         this.category = category;
         this.monthlyLimit = monthlyLimit;
+        this.month = month;
     }
 
     public Long getId() {
@@ -62,6 +69,14 @@ public class Budget {
 
     public void setMonthlyLimit(double monthlyLimit) {
         this.monthlyLimit = monthlyLimit;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
     }
 }
 

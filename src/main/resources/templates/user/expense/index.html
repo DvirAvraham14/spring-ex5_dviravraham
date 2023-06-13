@@ -50,15 +50,15 @@
     </style>
 </head>
 <body>
-<div th:replace="navbar :: navbar"></div>
+<div th:replace="~{navbar :: navbar}"></div>
 
 <div class="container">
     <h1>Expense Tracking</h1>
 
     <h2>Welcome to Expense Tracking</h2>
     <div>
-        <a href="/add-expense" class="btn btn-primary">Add Expense</a>
-        <a href="/my-expenses" class="btn btn-primary">My Expenses</a>
+        <a th:href="@{/expense/add}" class="btn btn-primary">Add Expense</a>
+        <a th:href="@{/expense/view}" class="btn btn-primary">My Expenses</a>
     </div>
 </div>
 </body>
