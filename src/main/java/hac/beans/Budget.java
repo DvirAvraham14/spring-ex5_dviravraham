@@ -26,6 +26,7 @@ public class Budget {
     @DateTimeFormat(pattern = "MM-yyyy")
     private String month;
 
+
     public Budget() {
     }
 

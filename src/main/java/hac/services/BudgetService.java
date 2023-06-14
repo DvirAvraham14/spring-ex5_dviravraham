@@ -7,8 +7,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-
 @Service
 public class BudgetService {
 
@@ -17,9 +15,9 @@ public class BudgetService {
 
 
     @Transactional
-    public void saveBudgets(ArrayList<Budget> budgets, String username, String month) {
+    public void saveBudgets(BudgetList budgets, String username, String month) {
         try {
-            for (Budget budget : budgets) {
+            for (Budget budget : budgets.getBudgets()) {
                 budget.setUsername(username);
                 budget.setMonth(month);
                 budgetRepository.save(budget);

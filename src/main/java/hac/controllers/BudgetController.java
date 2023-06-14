@@ -61,8 +61,11 @@ public class BudgetController {
     }
 
     @PostMapping(value = "/save", params = {"addRow"})
-    public String addRow(@ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model, Principal principal) {
-        System.out.println("addRow");
+    public String addRow(@Valid @ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model, Principal principal) {
+        if (result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
+            return VIEW_PATH + "add";
+        }
         budgets.addBudget(new Budget());
         model.addAttribute("budgetList", budgets);
         return VIEW_PATH + "add";
@@ -72,14 +75,11 @@ public class BudgetController {
     @PostMapping(value = "/save", params = {"save"})
     public String saveBudget(@Valid @ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
-            System.out.println("Errors");
-            System.out.println(result.getAllErrors());
-
             model.addAttribute("errors", result.getAllErrors());
             return VIEW_PATH + "add";
         }
         try {
-            budgetService.saveBudgets(budgets.getBudgets(), principal.getName(), budgets.getBudgets().get(0).getMonth());
+            budgetService.saveBudgets(budgets, principal.getName(), budgets.getBudgets().get(0).getMonth());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println(result.getAllErrors());
@@ -106,13 +106,11 @@ public class BudgetController {
         return VIEW_PATH + "add";
     }
 
+
     @PostMapping("/update")
     public String updateBudget(@Valid Budget budget, BindingResult result, Model model, Principal principal) {
         budget.setUsername(principal.getName());
         if (result.hasErrors()) {
-            System.out.println("jere");
-            System.out.println(result.getAllErrors());
-            model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("budget", budget);
             return VIEW_PATH + "add";
         }

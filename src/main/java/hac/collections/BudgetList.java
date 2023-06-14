@@ -1,14 +1,17 @@
 package hac.collections;
 
 import hac.beans.Budget;
+import jakarta.validation.Valid;
 
 import java.util.ArrayList;
 
 public class BudgetList {
+
+    @Valid
     private ArrayList<Budget> budgets;
 
     public BudgetList() {
-        this.budgets = new ArrayList<Budget>();
+        this.budgets = new ArrayList<>();
         Budget budget = new Budget();
         addBudget(budget);
     }
