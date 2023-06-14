@@ -1,8 +1,9 @@
 package hac.controllers;
 
 import hac.beans.Budget;
-import hac.beans.Expense;
 import hac.beans.repo.BudgetRepository;
+import hac.collections.BudgetList;
+import hac.services.BudgetService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
@@ -30,6 +31,9 @@ public class BudgetController {
     @Autowired
     private BudgetRepository budgetRepository;
 
+    @Autowired
+    private BudgetService budgetService;
+
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
         String uri = request.getRequestURI();
@@ -47,41 +51,57 @@ public class BudgetController {
         String username = principal.getName();
         List<Budget> budgets = budgetRepository.findByUsername(username);
         model.addAttribute("budgetItems", budgets);
-        return  VIEW_PATH + "view";
+        return VIEW_PATH + "view";
     }
 
-    @GetMapping("/add")
-    public String showAddBudgetPage(Budget budget, Model model) {
-      //  model.addAttribute("editMode", false);
-        return  VIEW_PATH + "add";
-    }
-
+//    @GetMapping("/add")
+//    public String showAddBudgetPage(Budget budget, Model model) {
+//        return VIEW_PATH + "add";
+//    }
+//
+//
 //    @PostMapping("/add")
-//    public String addBudget(@Valid ArrayList<Budget> budgets, BindingResult result, Model model, Principal principal) {
-//        for (Budget budget : budgets) {
-//            budget.setUser(principal.getName());
-//        }
+//    public String addBudget(@Valid Budget budget, BindingResult result, Model model, Principal principal) {
 //        if (result.hasErrors()) {
 //            model.addAttribute("errors", result.getAllErrors());
 //            return VIEW_PATH + "add";
 //        }
-//        for (Budget budget : budgets) {
-//            budget.setUser(principal.getName());
-//            budgetRepository.save(budget);
-//        }
-//
+//        budgetRepository.save(budget);
 //        return "redirect:/budget/view";
 //    }
 
 
+    @GetMapping("/add")
+    public String showAddBudgetPage(Model model, Principal principal) {
+        model.addAttribute("budgets", new BudgetList(principal.getName()));
+        return VIEW_PATH + "add";
+    }
+
     @PostMapping("/add")
-    public String addBudget(@Valid Budget budget, BindingResult result, Model model, Principal principal) {
-        budget.setUser(principal.getName());
+    public String addBudget(@ModelAttribute("budgets") BudgetList budgets, BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
-            return  VIEW_PATH + "add";
+            return VIEW_PATH + "add";
         }
-        budgetRepository.save(budget);
+
+        Budget newBudget = new Budget(principal.getName(), budgets.getBudgets().get(0).getMonth());
+        budgets.addBudget(newBudget);
+        System.out.println(budgets);
+        return VIEW_PATH + "add";
+    }
+
+    @PostMapping("/save")
+    public String saveBudget(@ModelAttribute("budgets") BudgetList budgets, BindingResult result, Model model, Principal principal) {
+        if (result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
+            return VIEW_PATH + "add";
+        }
+        try {
+            budgetService.saveBudgets(budgets.getBudgets());
+        } catch (Exception e) {
+            model.addAttribute("errors", e.getMessage());
+            return VIEW_PATH + "add";
+        }
         return "redirect:/budget/view";
     }
 
@@ -90,7 +110,7 @@ public class BudgetController {
         // Delete the budget item with the given ID
         budgetRepository.deleteById(id);
 
-        return  VIEW_PATH + "view";
+        return VIEW_PATH + "view";
     }
 
     @PostMapping("/edit/{id}")
@@ -99,7 +119,7 @@ public class BudgetController {
         Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
         model.addAttribute("budget", budget);
-        return  VIEW_PATH + "add";
+        return VIEW_PATH + "add";
     }
 
     @PostMapping("/update")
@@ -108,7 +128,7 @@ public class BudgetController {
         if (result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("budget", budget);
-            return  VIEW_PATH + "add";
+            return VIEW_PATH + "add";
         }
         budgetRepository.save(budget);
         return "redirect:/budget/view";

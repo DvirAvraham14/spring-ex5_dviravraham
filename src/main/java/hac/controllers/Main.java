@@ -1,21 +1,14 @@
 package hac.controllers;
 
-import hac.beans.Budget;
-import hac.beans.Expense;
 import hac.beans.Goal;
-import hac.beans.repo.BudgetRepository;
-import hac.beans.repo.ExpenseRepository;
 import hac.beans.repo.GoalRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
-import java.util.List;
 
 /**
  * this is a test controller, delete/replace it when you start working on your project

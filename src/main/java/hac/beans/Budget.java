@@ -5,10 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.security.Principal;
 
 
 @Entity
@@ -31,6 +27,15 @@ public class Budget {
     private String month;
 
     public Budget() {
+    }
+
+    public Budget(String username) {
+        this.username = username;
+    }
+
+    public Budget(String username, String month) {
+        this.username = username;
+        this.month = month;
     }
 
     public Budget(String category, double monthlyLimit, String month) {
