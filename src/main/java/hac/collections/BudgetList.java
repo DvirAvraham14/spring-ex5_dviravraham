@@ -8,18 +8,13 @@ public class BudgetList {
     private ArrayList<Budget> budgets;
 
     public BudgetList() {
-        budgets = new ArrayList<Budget>();
-        budgets.add(new Budget());
-    }
-
-    public BudgetList(String name) {
-        budgets = new ArrayList<Budget>();
-        Budget budget = new Budget(name);
-        budgets.add(budget);
+        this.budgets = new ArrayList<Budget>();
+        Budget budget = new Budget();
+        addBudget(budget);
     }
 
     public void addBudget(Budget budget) {
-        budgets.add(budget);
+        this.budgets.add(budget);
     }
 
     public ArrayList<Budget> getBudgets() {
