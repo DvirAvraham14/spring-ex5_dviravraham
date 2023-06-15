@@ -1,5 +1,7 @@
 package hac.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hac.beans.Budget;
 import hac.beans.repo.BudgetRepository;
 import hac.collections.BudgetList;
@@ -39,7 +41,7 @@ public class BudgetController {
     }
 
     @GetMapping("")
-    public String showBudgetPage(Model model, Principal principal) {
+    public String showBudgetPage() {
         return VIEW_PATH + "index";
     }
 
@@ -59,6 +61,40 @@ public class BudgetController {
         model.addAttribute("budgetList", budgets);
         return VIEW_PATH + "add";
     }
+
+    @PostMapping(value = "/getBudget")
+    public String getBudget(@ModelAttribute("budgetList") BudgetList budgets, Model model, Principal principal,
+                            @RequestBody String date) {
+        System.out.println("date: " + date);
+        System.out.println("name: " + principal.getName());
+        // Parse the JSON string
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(date);
+            String extractedDate = jsonNode.get("date").asText();
+            BudgetList bud = new BudgetList(budgetRepository.findAllByUsernameAndMonth(principal.getName(), extractedDate));
+            System.out.println("bud: " + bud.getBudgets().size());
+            if (bud.getBudgets().size() != 0) {
+                budgets.setBudgets(bud);
+                model.addAttribute("budgetList", budgets);
+                System.out.println("11111");
+                return "user/budget/add";
+            }
+            System.out.println("22222");
+
+            budgets.get(0).setMonth(extractedDate);
+            return VIEW_PATH + "add";
+            // Use the extracted date as needed
+
+        } catch (Exception e) {
+            // Handle parsing error
+            e.printStackTrace();
+        }
+        System.out.println("333");
+
+        return VIEW_PATH + "add";
+    }
+
 
     @PostMapping(value = "/save", params = {"addRow"})
     public String addRow(@Valid @ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model, Principal principal) {

@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BudgetService {
 
@@ -34,6 +36,15 @@ public class BudgetService {
         return budgets;
     }
 
+    public BudgetList getByUserAndMonth(String username, String month) {
+        List<Budget> budgets = budgetRepository.findAllByUsernameAndMonth(username, month);
+        if (budgets.size() != 0) {
+            return new BudgetList(budgets);
+        } else {
+            return new BudgetList();
+        }
+    }
+
     public void saveBudget(Budget budget) {
         budgetRepository.save(budget);
     }
@@ -41,6 +52,6 @@ public class BudgetService {
     public void deleteBudget(long id) {
         budgetRepository.deleteById(id);
     }
-    
+
 
 }

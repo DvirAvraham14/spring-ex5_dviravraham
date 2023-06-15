@@ -4,16 +4,25 @@ import hac.beans.Budget;
 import jakarta.validation.Valid;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BudgetList {
 
     @Valid
     private ArrayList<Budget> budgets;
 
+
     public BudgetList() {
         this.budgets = new ArrayList<>();
         Budget budget = new Budget();
         addBudget(budget);
+    }
+
+    public BudgetList(List<Budget> bud) {
+        this.budgets = new ArrayList<>();
+        for (Budget budget : bud) {
+            addBudget(budget);
+        }
     }
 
     public void add() {
@@ -36,8 +45,11 @@ public class BudgetList {
         return budgets;
     }
 
-    public void setBudgets(ArrayList<Budget> budgets) {
-        this.budgets = budgets;
+    public void setBudgets(BudgetList budgets) {
+        this.budgets = new ArrayList<>();
+        for (Budget budget : budgets.getBudgets()) {
+            this.budgets.add(budget);
+        }
     }
 
     public Budget get(int index) {
@@ -47,4 +59,5 @@ public class BudgetList {
     public void removeBudget(int index) {
         budgets.remove(index);
     }
+
 }
