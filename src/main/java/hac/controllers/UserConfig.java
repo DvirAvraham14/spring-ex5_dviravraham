@@ -10,9 +10,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 
 @Configuration
 public class UserConfig {
+
 
 
     @Bean
@@ -46,8 +49,9 @@ public class UserConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-//                .cors(withDefaults())
-//                .csrf(withDefaults())
+                .cors(withDefaults())
+                .csrf(withDefaults())
+
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/css/**", "/403", "/errorpage").permitAll()
                         .requestMatchers("/js/**").permitAll()
@@ -56,11 +60,11 @@ public class UserConfig {
                         .requestMatchers("/**").hasRole("ADMIN")
                 )
                 .formLogin((form) -> form
-                                .loginPage("/login")
-                                //.loginProcessingUrl("/login")
+                        .loginPage("/login")
+                        //.loginProcessingUrl("/login")
 //                        .defaultSuccessUrl("/", true)
-                                //.failureUrl("/login?failure")
-                                .permitAll()
+                        //.failureUrl("/login?failure")
+                        .permitAll()
                 )
                 .logout((logout) -> logout.permitAll())
                 .exceptionHandling(

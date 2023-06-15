@@ -3,6 +3,7 @@ package hac.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hac.beans.Budget;
+import hac.beans.Category;
 import hac.beans.repo.BudgetRepository;
 import hac.collections.BudgetList;
 import hac.services.BudgetService;
@@ -132,9 +133,20 @@ public class BudgetController {
     }
 
     @PostMapping("/del/{id}")
-    public String deleteBudget(@PathVariable("id") Long id) {
-        budgetService.deleteBudget(id);
-        return "redirect:/budget/view";
+    public String deleteBudget(@PathVariable("id") Long id, Principal principal) {
+        if(principal.getName().equals("admin")) {
+            // Get the username by the budget id
+            Budget existingBudget = budgetRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
+            budgetService.deleteBudget(id);
+
+            System.out.println("kkkkkkkkkkkkkk    " + existingBudget.getUsername());
+            return "redirect:/admin/budget/" + existingBudget.getUsername() ;
+        }
+        else{
+            budgetService.deleteBudget(id);
+        }
+            return "redirect:/budget/view";
     }
 
     @PostMapping("/edit/{id}")
@@ -145,18 +157,62 @@ public class BudgetController {
         model.addAttribute("budget", budget);
         return VIEW_PATH + "add";
     }
-
-
     @PostMapping("/update")
-    public String updateBudget(@Valid Budget budget, BindingResult result, Model model, Principal principal) {
-        budget.setUsername(principal.getName());
+    public String updateBudget(@Valid Budget budget, BindingResult result,
+                               Model model, Principal principal) {
+        String username = principal.getName();
+
+        if (username.equals("admin")) {
+            // Get the username by the budget id
+            Budget existingBudget = budgetRepository.findById(budget.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + budget.getId()));
+
+            username = existingBudget.getUsername();
+            budget.setUsername(username);
+        } else {
+            budget.setUsername(principal.getName());
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("budget", budget);
             return VIEW_PATH + "add";
         }
+
         budgetRepository.save(budget);
+
+        if (principal.getName().equals("admin")){
+            // Redirect to the updated user budget view
+            return "redirect:/admin/budget/" + username;
+        }
+
         return "redirect:/budget/view";
     }
+
+//    @PostMapping("/update")
+//    public String updateBudget(@Valid Budget budget, BindingResult result,
+//                               Model model, Principal principal) {
+//        String username = principal.getName();
+//
+//        if (username.equals("admin")) {
+//            // Get the username by the budget id
+//            Budget budget1 = budgetRepository.findById(budget.getId())
+//                    .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + budget.getId()));
+//
+//            username = budget1.getUsername();
+//            budget.setUsername(username);
+//        } else {
+//            budget.setUsername(principal.getName());
+//        }
+//
+//
+//        if (result.hasErrors()) {
+//            model.addAttribute("budget", budget);
+//            return VIEW_PATH + "add";
+//        }
+//
+//        budgetRepository.save(budget);
+//        return "redirect:/budget/view";
+//    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
