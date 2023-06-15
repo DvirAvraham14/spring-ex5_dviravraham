@@ -63,11 +63,21 @@ public class BudgetController {
     @PostMapping(value = "/save", params = {"addRow"})
     public String addRow(@Valid @ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
-            model.addAttribute("errors", result.getAllErrors());
             return VIEW_PATH + "add";
         }
-        budgets.addBudget(new Budget());
+        budgets.add();
         model.addAttribute("budgetList", budgets);
+        return VIEW_PATH + "add";
+    }
+
+    @PostMapping(value = "/save", params = {"DelRow"})
+    public String delRow(@ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model,
+                         @RequestParam("DelRow") int delRow) {
+        if (!result.hasErrors()) {
+            budgets.deleteBudget(delRow);
+            model.addAttribute("budgetList", budgets);
+        }
+
         return VIEW_PATH + "add";
     }
 
@@ -75,15 +85,11 @@ public class BudgetController {
     @PostMapping(value = "/save", params = {"save"})
     public String saveBudget(@Valid @ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
-            model.addAttribute("errors", result.getAllErrors());
             return VIEW_PATH + "add";
         }
         try {
             budgetService.saveBudgets(budgets, principal.getName(), budgets.getBudgets().get(0).getMonth());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(result.getAllErrors());
-            model.addAttribute("errors", e.getMessage());
             return VIEW_PATH + "add";
         }
         return "redirect:/budget/view";
@@ -91,10 +97,8 @@ public class BudgetController {
 
     @PostMapping("/del/{id}")
     public String deleteBudget(@PathVariable("id") Long id) {
-        // Delete the budget item with the given ID
-        budgetRepository.deleteById(id);
-
-        return VIEW_PATH + "view";
+        budgetService.deleteBudget(id);
+        return "redirect:/budget/view";
     }
 
     @PostMapping("/edit/{id}")

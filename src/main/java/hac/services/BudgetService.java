@@ -38,4 +38,9 @@ public class BudgetService {
         budgetRepository.save(budget);
     }
 
+    public void deleteBudget(long id) {
+        budgetRepository.deleteById(id);
+    }
+    
+
 }

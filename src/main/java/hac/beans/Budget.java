@@ -23,6 +23,7 @@ public class Budget {
     @PositiveOrZero(message = "Amount must be positive")
     private double monthlyLimit;
 
+    @NotEmpty(message = "Month is mandatory")
     @DateTimeFormat(pattern = "MM-yyyy")
     private String month;
 
@@ -32,6 +33,11 @@ public class Budget {
 
     public Budget(String username) {
         this.username = username;
+    }
+
+    public Budget(Budget budget) {
+        this.username = budget.getUsername();
+        this.month = budget.getMonth();
     }
 
     public Budget(String username, String month) {
