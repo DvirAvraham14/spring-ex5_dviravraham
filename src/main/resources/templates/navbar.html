@@ -25,7 +25,7 @@
                 </li>
                 <li class="nav-item"
                     th:if="${#authorization.expression('isAuthenticated()') and #authorization.expression('hasRole(''ADMIN'')')}">
-                    <a class="nav-link" href="#">admin pages</a>
+                    <a class="nav-link" th:href="@{/admin}">admin pages</a>
                 </li>
             </ul>
             <span class="navbar-text">

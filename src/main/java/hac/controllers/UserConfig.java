@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,10 +55,11 @@ public class UserConfig {
 
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/css/**", "/403", "/errorpage").permitAll()
-                                .requestMatchers("/expense/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers("/budget/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers("/**").hasRole("ADMIN")
-                            )
+                        .requestMatchers("/expense/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/budget/**").hasAnyRole("USER", "ADMIN")
+//                        .requestMatchers("/admin/users").hasRole("ADMIN") // Allow only admin to access /admin/users
+                        .requestMatchers("/**").hasRole("ADMIN")
+                )
                 .formLogin((form) -> form
                         .loginPage("/login")
                         //.loginProcessingUrl("/login")
@@ -73,5 +75,7 @@ public class UserConfig {
 
         return http.build();
     }
+
+
 
 }
