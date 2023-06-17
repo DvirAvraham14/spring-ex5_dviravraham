@@ -33,8 +33,8 @@ public class UserConfig {
                 .password(bCryptPasswordEncoder.encode("3"))
                 .roles("USER")
                 .build());
-        manager.createUser(User.withUsername("admin")
-                .password(bCryptPasswordEncoder.encode("password"))
+        manager.createUser(User.withUsername("a")
+                .password(bCryptPasswordEncoder.encode("1"))
                 .roles("ADMIN")
                 .build());
         return manager;

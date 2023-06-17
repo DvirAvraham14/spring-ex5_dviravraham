@@ -1,7 +1,9 @@
 package hac.controllers;
 
 import hac.beans.Budget;
+import hac.beans.Category;
 import hac.beans.Expense;
+import hac.beans.repo.CategoryRepository;
 import hac.beans.repo.ExpenseRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -22,6 +24,8 @@ public class ExpenseController {
     @Autowired
     private ExpenseRepository expenseRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
@@ -39,12 +43,16 @@ public class ExpenseController {
     public String showExpenses(Model model, Principal principal) {
         String username = principal.getName();
         List<Expense> expenses = expenseRepository.findByUsername(username);
+        List<Category> categories = categoryRepository.findAll();
+        model.addAttribute("categories", categories);
         model.addAttribute("expenses", expenses);
         return VIEW_PATH + "view";
     }
 
     @GetMapping("/add")
     public String showAddExpensePageMain(Expense expense, Model model) {
+        List<Category> categories = categoryRepository.findAll();
+        model.addAttribute("categories", categories);
         return VIEW_PATH + "add";
     }
 
@@ -52,6 +60,8 @@ public class ExpenseController {
     public String addExpense(@Valid @ModelAttribute Expense expense, BindingResult result, Principal principal, Model model) {
         expense.setUser(principal.getName());
         if (result.hasErrors()) {
+            List<Category> categories = categoryRepository.findAll();
+            model.addAttribute("categories", categories);
             return VIEW_PATH + "add";
         }
         expenseRepository.save(expense);

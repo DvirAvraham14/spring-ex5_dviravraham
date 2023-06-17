@@ -17,13 +17,18 @@
 <div class="container">
     <h1>My Expenses</h1>
     <div class="filter-container">
+<!--        <label for="category-filter">Filter by Category:</label>-->
+<!--        <select id="category-filter">-->
+<!--            <option value="">All</option>-->
+<!--            <option value="food">Food</option>-->
+<!--            <option value="transportation">Transportation</option>-->
+<!--            <option value="utilities">Utilities</option>-->
+<!--            <option value="entertainment">Entertainment</option>-->
+<!--        </select>-->
         <label for="category-filter">Filter by Category:</label>
         <select id="category-filter">
             <option value="">All</option>
-            <option value="food">Food</option>
-            <option value="transportation">Transportation</option>
-            <option value="utilities">Utilities</option>
-            <option value="entertainment">Entertainment</option>
+            <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
         </select>
 
         <label for="date-filter">Filter by Date:</label>

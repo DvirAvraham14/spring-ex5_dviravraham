@@ -21,31 +21,37 @@
             <input type="hidden" th:value="*{id}" name="id" />
         </span>
         <div class="form-group">
-            <label for="category">Category:</label>
-            <select id="category" th:field="*{category}" >
+            <label for="category">Category: <span class="text-danger">*</span></label>
+            <select id="category" th:field="*{category}" th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''" required>
                 <option value="" selected>Select a category</option>
-                <option value="food">Food</option>
-                <option value="transportation">Transportation</option>
-                <option value="utilities">Utilities</option>
-                <option value="entertainment">Entertainment</option>
+                <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
             </select>
+<!--            <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="invalid-feedback"></div>-->
         </div>
         <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-danger"></span>
+
+
         <div class="form-group">
-            <label for="amount">Amount:</label>
-            <input type="number" th:field="*{amount}" id="amount" name="amount" min="0" step="0.01" />
+            <label for="amount">Amount: <span class="text-danger">*</span></label>
+            <input type="number" th:field="*{amount}" id="amount" name="amount" min="0" step="0.5" required="required" />
         </div>
         <span th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" class="text-danger"></span>
+
+
         <div class="form-group">
-            <label for="date">Date:</label>
-            <input type="date" th:field="*{date}" id="date" name="date" />
+            <label for="date">Date: <span class="text-danger">*</span></label>
+            <input type="date" th:field="*{date}" id="date" name="date" required />
         </div>
         <span th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="text-danger"></span>
+
+
         <div class="form-group">
             <label for="notes">Notes:</label>
             <textarea id="notes" th:field="*{notes}" name="notes"></textarea>
         </div>
-        <span th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}" class="text-danger"></span>
+<!--        <span th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}" class="text-danger"></span>-->
+
+
         <button type="submit">Add Expense</button>
 
     </form>

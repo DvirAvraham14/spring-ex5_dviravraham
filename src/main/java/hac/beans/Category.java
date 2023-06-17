@@ -11,7 +11,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 
 
-@Entity
+@Entity(name = "Category")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

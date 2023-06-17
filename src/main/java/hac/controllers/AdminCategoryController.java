@@ -44,7 +44,7 @@ public class AdminCategoryController {
         return "/admin/categories";
     }
 
-    @PostMapping
+    @PostMapping("/categories/add")
     public String createCategory(@ModelAttribute Category category) {
         categoryRepository.save(category);
         return "redirect:/admin/categories";
