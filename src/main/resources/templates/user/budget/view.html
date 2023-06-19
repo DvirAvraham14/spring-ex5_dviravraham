@@ -17,10 +17,7 @@
         <label for="category-filter">Filter by Category:</label>
         <select id="category-filter">
             <option value="">All</option>
-            <option value="food">Food</option>
-            <option value="transportation">Transportation</option>
-            <option value="utilities">Utilities</option>
-            <option value="entertainment">Entertainment</option>
+            <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
         </select>
     </div>
     <table id="budget-table">
@@ -40,24 +37,45 @@
             <td th:text="${budgetItem.month}"></td>
             <td>
                 <div class="button-container">
-                    <form th:action="@{/budget/edit/{id}(id=${budgetItem.id})}" method="post">
+                    <span th:if="${!isAdmin}">
+                        <form th:action="@{/budget/edit/{id}(id=${budgetItem.id})}" method="post">
                         <input type="hidden" name="_method" value="DELETE"/>
                         <button type="submit" class="btn btn-link">
                             <i class="fas fa-edit"></i>
                         </button>
                     </form>
-                    <form th:action="@{/budget/del/{id}(id=${budgetItem.id})}" method="post">
+                    </span>
+                    <span th:if="${isAdmin}">
+                        <form th:action="@{/admin/budget/edit}" method="post">
+                        <input type="hidden" name="id" th:value="${budgetItem.id}"/>
+                        <button type="submit" class="btn btn-link">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </form>
+                    </span>
+                    <span th:if="${isAdmin}">
+                    <form th:action="@{/admin/budget/del}" method="post">
+                        <input type="hidden" name="id" th:value="${budgetItem.id}"/>
+                        <button type="submit" class="btn btn-link">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                    </span>
+                    <span th:if="${!isAdmin}">
+                        <form th:action="@{/budget/del/{id}(id=${budgetItem.id})}" method="post">
                         <input type="hidden" name="_method" value="DELETE"/>
                         <button type="submit" class="btn btn-link">
                             <i class="fas fa-trash"></i>
                         </button>
                     </form>
+                    </span>
                 </div>
             </td>
         </tr>
         </tbody>
     </table>
-    <a class="btn btn-primary" th:href="@{/budget/add}">Add Budget</a>
+
+    <a  class="btn btn-primary" th:href="@{/budget/add}">Add Budget</a>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 

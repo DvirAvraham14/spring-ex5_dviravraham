@@ -13,9 +13,10 @@ const reloadBudget = (date) => {
         }
     }).then((html) => {
         if (html !== "") {
-            const currentDocument = document.documentElement;
-            const newDocument = new DOMParser().parseFromString(html, 'text/html');
-            document.replaceChild(newDocument.documentElement, currentDocument);
+            const currentDocument = document.getElementById("budgetContainer");
+            //const newDocument = new DOMParser().parseFromString(html, 'text/html');
+            //document.replaceChild(newDocument.documentElement, currentDocument);
+            currentDocument.innerHTML = html;
         }
     })
         .catch((error) => {

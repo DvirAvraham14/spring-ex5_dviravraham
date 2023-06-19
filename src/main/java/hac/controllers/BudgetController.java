@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hac.beans.Budget;
 import hac.beans.Category;
 import hac.beans.repo.BudgetRepository;
+import hac.beans.repo.CategoryRepository;
 import hac.collections.BudgetList;
 import hac.services.BudgetService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -35,10 +37,23 @@ public class BudgetController {
     @Autowired
     private BudgetService budgetService;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
         String uri = request.getRequestURI();
         return uri.endsWith("/add") ? false : uri.contains("/edit");
+    }
+
+    @ModelAttribute("isAdmin")
+    public boolean addIsAdminModelAttribute(){
+        return false;
+    }
+
+    @ModelAttribute("categories")
+    public List<Category> addCategoriesModelAttribute(){
+        return categoryRepository.findAll();
     }
 
     @GetMapping("")
@@ -52,6 +67,7 @@ public class BudgetController {
         String username = principal.getName();
         List<Budget> budgets = budgetRepository.findByUsername(username);
         model.addAttribute("budgetItems", budgets);
+
         return VIEW_PATH + "view";
     }
 
@@ -66,34 +82,26 @@ public class BudgetController {
     @PostMapping(value = "/getBudget")
     public String getBudget(@ModelAttribute("budgetList") BudgetList budgets, Model model, Principal principal,
                             @RequestBody String date) {
-        System.out.println("date: " + date);
-        System.out.println("name: " + principal.getName());
         // Parse the JSON string
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(date);
             String extractedDate = jsonNode.get("date").asText();
             BudgetList bud = new BudgetList(budgetRepository.findAllByUsernameAndMonth(principal.getName(), extractedDate));
-            System.out.println("bud: " + bud.getBudgets().size());
             if (bud.getBudgets().size() != 0) {
                 budgets.setBudgets(bud);
                 model.addAttribute("budgetList", budgets);
-                System.out.println("11111");
-                return "user/budget/add";
+                return "user/budget/forms/new :: addBudget";
             }
-            System.out.println("22222");
-
             budgets.get(0).setMonth(extractedDate);
-            return VIEW_PATH + "add";
+            return "user/budget/forms/new :: addBudget";
             // Use the extracted date as needed
 
         } catch (Exception e) {
             // Handle parsing error
             e.printStackTrace();
         }
-        System.out.println("333");
-
-        return VIEW_PATH + "add";
+        return "user/budget/forms/new :: addBudget";
     }
 
 
@@ -102,6 +110,7 @@ public class BudgetController {
         if (result.hasErrors()) {
             return VIEW_PATH + "add";
         }
+
         budgets.add();
         model.addAttribute("budgetList", budgets);
         return VIEW_PATH + "add";
@@ -112,6 +121,7 @@ public class BudgetController {
                          @RequestParam("DelRow") int delRow) {
         if (!result.hasErrors()) {
             budgets.deleteBudget(delRow);
+
             model.addAttribute("budgetList", budgets);
         }
 
@@ -125,6 +135,7 @@ public class BudgetController {
             return VIEW_PATH + "add";
         }
         try {
+
             budgetService.saveBudgets(budgets, principal.getName(), budgets.getBudgets().get(0).getMonth());
         } catch (Exception e) {
             return VIEW_PATH + "add";
@@ -132,22 +143,13 @@ public class BudgetController {
         return "redirect:/budget/view";
     }
 
-    @PostMapping("/del/{id}")
-    public String deleteBudget(@PathVariable("id") Long id, Principal principal) {
-        if(principal.getName().equals("admin")) {
-            // Get the username by the budget id
-            Budget existingBudget = budgetRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
-            budgetService.deleteBudget(id);
 
-            System.out.println("kkkkkkkkkkkkkk    " + existingBudget.getUsername());
-            return "redirect:/admin/budget/" + existingBudget.getUsername() ;
-        }
-        else{
+    @PostMapping("/del/{id}")
+    public String deleteBudget(@PathVariable("id") Long id, Principal principal, RedirectAttributes redirectAttributes) {
             budgetService.deleteBudget(id);
-        }
-            return "redirect:/budget/view";
+        return "redirect:/budget/view";
     }
+
 
     @PostMapping("/edit/{id}")
     public String editBudget(@PathVariable("id") Long id, Model model) {
@@ -155,64 +157,22 @@ public class BudgetController {
         Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
         model.addAttribute("budget", budget);
+        model.addAttribute("isAdmin", false);
         return VIEW_PATH + "add";
     }
+
+
     @PostMapping("/update")
     public String updateBudget(@Valid Budget budget, BindingResult result,
                                Model model, Principal principal) {
-        String username = principal.getName();
-
-        if (username.equals("admin")) {
-            // Get the username by the budget id
-            Budget existingBudget = budgetRepository.findById(budget.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + budget.getId()));
-
-            username = existingBudget.getUsername();
-            budget.setUsername(username);
-        } else {
-            budget.setUsername(principal.getName());
-        }
-
         if (result.hasErrors()) {
             model.addAttribute("budget", budget);
             return VIEW_PATH + "add";
         }
-
         budgetRepository.save(budget);
-
-        if (principal.getName().equals("admin")){
-            // Redirect to the updated user budget view
-            return "redirect:/admin/budget/" + username;
-        }
 
         return "redirect:/budget/view";
     }
-
-//    @PostMapping("/update")
-//    public String updateBudget(@Valid Budget budget, BindingResult result,
-//                               Model model, Principal principal) {
-//        String username = principal.getName();
-//
-//        if (username.equals("admin")) {
-//            // Get the username by the budget id
-//            Budget budget1 = budgetRepository.findById(budget.getId())
-//                    .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + budget.getId()));
-//
-//            username = budget1.getUsername();
-//            budget.setUsername(username);
-//        } else {
-//            budget.setUsername(principal.getName());
-//        }
-//
-//
-//        if (result.hasErrors()) {
-//            model.addAttribute("budget", budget);
-//            return VIEW_PATH + "add";
-//        }
-//
-//        budgetRepository.save(budget);
-//        return "redirect:/budget/view";
-//    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})

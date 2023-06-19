@@ -3,7 +3,7 @@
     <!-- Add Budget Form -->
     <h2>Add Budget</h2>
 
-    <form th:action="${'/budget/save'}" th:object="${budgetList}" method="post">
+    <form th:action="${isAdmin ? '/admin/budget/save' : '/budget/save'}" th:object="${budgetList}" method="post">
         <div th:each="budget, status : *{budgets}">
             <span th:if="*{budgets.get(__${status.index}__).getId() != null}">
                 <input type="hidden" th:field="*{budgets[__${status.index}__].id}"/>
@@ -27,11 +27,10 @@
                 <div class="form-group">
                     <label for="category">Category:</label>
                     <select th:field="*{budgets[__${status.index}__].category}">
-                        <option value="">Select a category</option>
-                        <option value="food">Food</option>
-                        <option value="transportation">Transportation</option>
-                        <option value="utilities">Utilities</option>
-                        <option value="entertainment">Entertainment</option>
+                <option value="" selected>Select a category</option>
+
+                        <option th:each="category : ${categories}" th:value="${category.name}"
+                                th:text="${category.name}">?</option>
                     </select>
                     <span th:if="${#fields.hasErrors('budgets[__${status.index}__].category')}"
                           th:errors="*{budgets[__${status.index}__].category}" class="text-danger"></span>

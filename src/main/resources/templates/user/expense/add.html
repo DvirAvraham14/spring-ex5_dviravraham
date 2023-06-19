@@ -26,7 +26,6 @@
                 <option value="" selected>Select a category</option>
                 <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
             </select>
-<!--            <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="invalid-feedback"></div>-->
         </div>
         <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-danger"></span>
 
@@ -49,8 +48,6 @@
             <label for="notes">Notes:</label>
             <textarea id="notes" th:field="*{notes}" name="notes"></textarea>
         </div>
-<!--        <span th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}" class="text-danger"></span>-->
-
 
         <button type="submit">Add Expense</button>
 

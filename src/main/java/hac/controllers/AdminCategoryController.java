@@ -6,21 +6,19 @@ import hac.beans.Expense;
 import hac.beans.repo.BudgetRepository;
 import hac.beans.repo.CategoryRepository;
 import hac.beans.repo.ExpenseRepository;
-import jakarta.validation.ConstraintViolationException;
+import hac.services.BudgetService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +28,7 @@ import java.util.Optional;
 public class AdminCategoryController {
 
     @Autowired
-    private CategoryRepository  categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @GetMapping("")
     public String showAdminPage(Model model) {
@@ -77,8 +75,6 @@ public class AdminCategoryController {
         return "redirect:/admin/categories";
     }
 
-    @Autowired
-    private UserConfig userConfig;
 
     @GetMapping("/users")
     public String getUsers(Model model) {
@@ -93,19 +89,92 @@ public class AdminCategoryController {
     @Autowired
     BudgetRepository budgetRepository;
 
-    @GetMapping("/budget/{name}")
-    public String showBudgets(@PathVariable("name") String username ,Model model) {
+    @Autowired
+    private BudgetService budgetService;
+
+
+
+
+    @ModelAttribute("editMode")
+    public boolean addEditModeModelAttribute(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return uri.endsWith("/add") ? false : uri.contains("/edit");
+    }
+
+    @ModelAttribute("categories")
+    public List<Category> getCategories() {
+        return categoryRepository.findAll();
+    }
+
+    @PostMapping("/budget/update")
+    public String updateBudget(@RequestParam("id") Long id,@Valid Budget budget, BindingResult result,
+                               Model model, Principal principal) {
+        if (result.hasErrors()) {
+            model.addAttribute("isAdmin", true);
+            model.addAttribute("error", "Error");
+            return "/user/budget/add";
+        }
+        String username = budgetRepository.findById(id).get().getUsername();
+        budget.setUsername(username);
+        budgetRepository.save(budget);
+        model.addAttribute("isAdmin", true);
+        model.addAttribute("budgetItems", budgetRepository.findByUsername(username));
+        return "/user/budget/view";
+    }
+
+    @PostMapping("/budget/edit")
+    public String editBudget(@RequestParam("id") Long id, Model model) {
+        String username = budgetRepository.findById(id).get().getUsername();
+        Budget budget = budgetRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
+        budget.setUsername(username);
+        model.addAttribute("budget", budget);
+        model.addAttribute("isAdmin", true);
+        return "/user/budget/add";
+    }
+
+
+    @PostMapping("/budget/del")
+    public String deleteBudget(@RequestParam("id") Long id, Model model) {
+        String username = budgetRepository.findById(id).get().getUsername();
+        budgetRepository.deleteById(id);
         List<Budget> budgets = budgetRepository.findByUsername(username);
         model.addAttribute("budgetItems", budgets);
+        model.addAttribute("isAdmin", true);
         return "/user/budget/view";
+    }
+
+    @PostMapping("/budget")
+    public String showBudgets(@RequestParam("userId") String username, Model model, Principal principal) {
+        try {
+            List<Budget> budgets = budgetRepository.findByUsername(username);
+            model.addAttribute("budgetItems", budgets);
+            model.addAttribute("isAdmin", true);
+            return "/user/budget/view";
+        } catch (Exception e) {
+            model.addAttribute("status", "Error");
+            model.addAttribute("message", e.getMessage());
+            return "error";
+        }
     }
 
     @Autowired
     private ExpenseRepository expenseRepository;
-    @PostMapping("/expense/{name}")
-    public String showExpenses(@PathVariable("name") String username,Model model) {
-        List<Expense> expenses = expenseRepository.findByUsername(username);
-        model.addAttribute("expenses", expenses);
-        return "/user/expense/view";
+
+
+    @PostMapping("/expense")
+    public String showExpenses(@RequestParam("userId") String username, Model model) {
+        try {
+            List<Expense> expenses = expenseRepository.findByUsername(username);
+            model.addAttribute("expenses", expenses);
+            model.addAttribute("isAdmin", true);
+
+            return "/user/expense/view";
+        } catch (Exception e) {
+            model.addAttribute("status", "Error");
+            model.addAttribute("message", e.getMessage());
+            return "error";
+        }
     }
+
 }

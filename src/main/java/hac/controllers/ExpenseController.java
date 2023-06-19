@@ -33,6 +33,16 @@ public class ExpenseController {
         return uri.endsWith("/add") ? false : uri.contains("/edit");
     }
 
+    @ModelAttribute("isAdmin")
+    public boolean addIsAdminModelAttribute(){
+        return false;
+    }
+
+    @ModelAttribute("categories")
+    public List<Category> getCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories;
+    }
 
     @GetMapping("")
     public String expenseHome(Model model) {
@@ -46,6 +56,10 @@ public class ExpenseController {
         List<Category> categories = categoryRepository.findAll();
         model.addAttribute("categories", categories);
         model.addAttribute("expenses", expenses);
+//        if(username.equals("a"))
+//            model.addAttribute("isAdmin", true);
+//        else
+//            model.addAttribute("isAdmin", false);
         return VIEW_PATH + "view";
     }
 
@@ -60,23 +74,21 @@ public class ExpenseController {
     public String addExpense(@Valid @ModelAttribute Expense expense, BindingResult result, Principal principal, Model model) {
         expense.setUser(principal.getName());
         if (result.hasErrors()) {
-            List<Category> categories = categoryRepository.findAll();
-            model.addAttribute("categories", categories);
             return VIEW_PATH + "add";
         }
         expenseRepository.save(expense);
         return "redirect:/expense/view";
     }
 
-    @GetMapping("/del/{id}")
-    public String deleteBudget(@PathVariable("id") Long id) {
+    @PostMapping("/del")
+    public String deleteBudget(@RequestParam("id") Long id) {
         // Delete the budget item with the given ID
         expenseRepository.deleteById(id);
-        return  VIEW_PATH + "view";
+        return "redirect:/expense/view";
     }
 
-    @PostMapping("/edit/{id}")
-    public String editExpense(@PathVariable("id") Long id, Model model) {
+    @PostMapping("/edit")
+    public String editExpense(@RequestParam("id") Long id, Model model) {
         // Find the budget item with the given ID
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));

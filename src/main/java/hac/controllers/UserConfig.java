@@ -53,7 +53,7 @@ public class UserConfig {
                 .csrf(withDefaults())
 
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/css/**", "/403", "/errorpage").permitAll()
+                        .requestMatchers("/", "/css/**", "/403", "/error").permitAll()
                         .requestMatchers("/js/**").permitAll()
                         .requestMatchers("/expense/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/budget/**").hasAnyRole("USER", "ADMIN")
