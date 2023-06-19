@@ -164,7 +164,7 @@ public class AdminCategoryController {
 
     @PostMapping("/expense")
     public String showExpenses(@RequestParam("userId") String username, Model model) {
-        try {
+        try{
             List<Expense> expenses = expenseRepository.findByUsername(username);
             model.addAttribute("expenses", expenses);
             model.addAttribute("isAdmin", true);
