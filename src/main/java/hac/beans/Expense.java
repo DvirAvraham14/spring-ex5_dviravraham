@@ -90,5 +90,17 @@ public class Expense {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    @Override
+    public String toString() {
+        return "Expense{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", category='" + category + '\'' +
+                ", amount=" + amount +
+                ", date=" + date +
+                ", notes='" + notes + '\'' +
+                '}';
+    }
 }
 

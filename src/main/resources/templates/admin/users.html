@@ -20,13 +20,9 @@
         <tr th:each="user : ${users}">
             <td th:text="${user}"></td>
             <td>
-<!--                        <a class="btn btn-primary" th:href="@{/admin/expense/{userId}(userId=${user})}">User Expenses</a>-->
                 <div class="button-container">
                     <div class="row">
                         <div class="col-md-6">
-<!--                            <form id="expenseForm" method="post" th:action="@{/admin/expense/{userId}(userId=${user})}">-->
-<!--                                <button type="submit" class="btn btn-primary">User Expenses</button>-->
-<!--                            </form>-->
                             <form id="expenseForm" method="post" th:action="@{/admin/expense}">
                                 <input type="hidden" name="userId" th:value="${user}" />
                                 <button type="submit" class="btn btn-primary">User Expenses</button>
@@ -34,9 +30,7 @@
 
                         </div>
                         <div class="col-md-6">
-<!--                            <form id="budgetForm" method="post" th:action="@{/admin/budget/{userId}(userId=${user})}">-->
-<!--                                <button type="submit" class="btn btn-primary">User Budget</button>-->
-<!--                            </form>-->
+
                         <form id="budgetForm" method="post" th:action="@{/admin/budget}">
                             <input type="hidden" name="userId" th:value="${user}" />
                             <button type="submit" class="btn btn-primary">User Budget</button>
@@ -44,8 +38,6 @@
                         </div>
                     </div>
                 </div>
-
-<!--                        <a class="btn btn-primary" th:href="@{/admin/budget/{userId}(userId=${user})}">User Budget</a>-->
             </td>
         </tr>
         </tbody>

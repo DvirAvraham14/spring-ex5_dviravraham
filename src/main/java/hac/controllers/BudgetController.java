@@ -164,7 +164,7 @@ public class BudgetController {
 
     @PostMapping("/update")
     public String updateBudget(@Valid Budget budget, BindingResult result,
-                               Model model, Principal principal) {
+                               Model model) {
         if (result.hasErrors()) {
             model.addAttribute("budget", budget);
             return VIEW_PATH + "add";

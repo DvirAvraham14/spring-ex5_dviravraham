@@ -16,9 +16,10 @@
 
     <!-- Add Expense Form -->
     <h2>Add Expense</h2>
-    <form th:action="${'/expense/' + (!editMode ? 'add' : 'update')}" method="post" th:object="${expense}">
+    <form th:action="${isAdmin ? '/admin' : ''} + ${'/expense/' + (!editMode ? 'add' : 'update')}" method="post" th:object="${expense}">
         <span th:if="${editMode}">
-            <input type="hidden" th:value="*{id}" name="id" />
+            <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:field="*{user}" />
         </span>
         <div class="form-group">
             <label for="category">Category: <span class="text-danger">*</span></label>

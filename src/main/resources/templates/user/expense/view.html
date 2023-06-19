@@ -17,14 +17,6 @@
 <div class="container">
     <h1>My Expenses</h1>
     <div class="filter-container">
-<!--        <label for="category-filter">Filter by Category:</label>-->
-<!--        <select id="category-filter">-->
-<!--            <option value="">All</option>-->
-<!--            <option value="food">Food</option>-->
-<!--            <option value="transportation">Transportation</option>-->
-<!--            <option value="utilities">Utilities</option>-->
-<!--            <option value="entertainment">Entertainment</option>-->
-<!--        </select>-->
         <label for="category-filter">Filter by Category:</label>
         <select id="category-filter">
             <option value="">All</option>
@@ -56,21 +48,20 @@
             <td th:text="${expense.date}"></td>
             <td th:text="${expense.notes}"></td>
             <td>
-                <div class="button-container" th:if="${!isAdmin}">
-                    <form th:action="@{/expense/edit}" method="post">
-                        <input th:type="hidden" name="id" th:value="${expense.id}">
+                <div class="button-container">
+                    <form th:action="${isAdmin ? '/admin/expense/edit' : '/expense/edit'}" method="post">
+                        <input th:type="hidden" th:name="id" th:value="${expense.id}">
                         <button type="submit" class="btn btn-link">
                             <i class="fas fa-edit"></i>
                         </button>
                     </form>
-                    <form th:action="@{/expense/del}" method="post">
-                        <input th:type="hidden" name="id" th:value="${expense.id}">
+                    <form th:action="${isAdmin ? '/admin/expense/del' : '/expense/del'}" method="post">
+                        <input th:type="hidden" th:name="id" th:value="${expense.id}">
                         <button type="submit" class="btn btn-link">
                             <i class="fas fa-trash"></i>
                         </button>
                     </form>
                 </div>
-                <span th:if="${isAdmin}">Only users can delete/edit</span>
 
             </td>
         </tr>

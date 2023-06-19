@@ -4,7 +4,8 @@
 <!--    <form th:action="${'/budget/update'}" th:object="${budget}" method="post">-->
     <form th:action="${isAdmin ? '/admin/budget/update' : '/budget/update'}" th:object="${budget}" method="post">
 
-        <input type="hidden" name="id" th:field="*{id}"/>
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" th:field="*{username}" />
 
         <div class="form-group">
             <label for="month">Month:</label>

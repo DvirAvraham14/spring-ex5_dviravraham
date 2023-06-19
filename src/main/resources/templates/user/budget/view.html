@@ -75,7 +75,7 @@
         </tbody>
     </table>
 
-    <a  class="btn btn-primary" th:href="@{/budget/add}">Add Budget</a>
+    <a  th:unless="${isAdmin}" class="btn btn-primary" th:href="@{/budget/add}">Add Budget</a>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 

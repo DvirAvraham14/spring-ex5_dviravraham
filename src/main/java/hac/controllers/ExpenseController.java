@@ -56,10 +56,6 @@ public class ExpenseController {
         List<Category> categories = categoryRepository.findAll();
         model.addAttribute("categories", categories);
         model.addAttribute("expenses", expenses);
-//        if(username.equals("a"))
-//            model.addAttribute("isAdmin", true);
-//        else
-//            model.addAttribute("isAdmin", false);
         return VIEW_PATH + "view";
     }
 
@@ -100,7 +96,6 @@ public class ExpenseController {
     public String updateExpense(@Valid Expense expense, BindingResult result, Model model, Principal principal) {
         expense.setUser(principal.getName());
         if (result.hasErrors()) {
-            model.addAttribute("errors", result.getAllErrors());
             model.addAttribute("expense", expense);
             return  VIEW_PATH + "edit";
         }
