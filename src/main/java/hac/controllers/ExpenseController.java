@@ -8,12 +8,15 @@ import hac.beans.repo.ExpenseRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Controller
@@ -102,4 +105,38 @@ public class ExpenseController {
         expenseRepository.save(expense);
         return "redirect:/expense/view";
     }
+
+    @PostMapping("/filter")
+    public String filterExpenses(@RequestParam(value = "category", required = false) String category,
+                                 @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                 Model model, Principal principal) {
+        String username = principal.getName();
+
+        if (category == null || category.isEmpty()) {
+            category = null; // Set category to null to indicate searching for all categories
+        }
+
+        List<Expense> expenses;
+        if (category != null && date != null) {
+            // Both category and date are specified
+            expenses = expenseRepository.findAllByUsernameAndDateAndCategory(username, date, category);
+        } else if (category != null) {
+            // Only category is specified
+            expenses = expenseRepository.findAllByUsernameAndCategory(username, category);
+        } else if (date != null) {
+            // Only date is specified
+            expenses = expenseRepository.findAllByUsernameAndDate(username, date);
+        } else {
+            // Neither category nor date is specified, search all expenses
+            expenses = expenseRepository.findAllByUsername(username);
+        }
+
+        List<Category> categories = categoryRepository.findAll();
+        model.addAttribute("dateValue", date);
+        model.addAttribute("categoryValue", category);
+        model.addAttribute("expenses", expenses);
+        return VIEW_PATH + "view";
+    }
+
+
 }

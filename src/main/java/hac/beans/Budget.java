@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Objects;
+
 
 @Entity
-@Table(name = "budgets")
+@Table(name = "budgets", uniqueConstraints = { @UniqueConstraint(name="Checking", columnNames = {"username", "category", "month"})})
 public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +28,8 @@ public class Budget {
     @NotEmpty(message = "Month is mandatory")
     @DateTimeFormat(pattern = "MM-yyyy")
     private String month;
+
+
 
 
     public Budget() {
@@ -90,6 +94,22 @@ public class Budget {
     public void setMonth(String month) {
         this.month = month;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Budget)) return false;
+        Budget budget = (Budget) o;
+        return Objects.equals(username, budget.username) &&
+                Objects.equals(month, budget.month) &&
+                Objects.equals(category, budget.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, month, category);
+    }
+
 }
 
 

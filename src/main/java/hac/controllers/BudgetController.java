@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -132,12 +134,17 @@ public class BudgetController {
     @PostMapping(value = "/save", params = {"save"})
     public String saveBudget(@Valid @ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model, Principal principal) {
         if (result.hasErrors()) {
+            System.out.println("Duplicate entry for category and month");
+
             return VIEW_PATH + "add";
         }
         try {
-
             budgetService.saveBudgets(budgets, principal.getName(), budgets.getBudgets().get(0).getMonth());
-        } catch (Exception e) {
+        }catch (DataIntegrityViolationException e){
+            model.addAttribute("duplicate", "Duplicate entry for category and month");
+            return VIEW_PATH + "add";
+        }
+        catch (Exception e) {
             return VIEW_PATH + "add";
         }
         return "redirect:/budget/view";
@@ -157,7 +164,6 @@ public class BudgetController {
         Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
         model.addAttribute("budget", budget);
-        model.addAttribute("isAdmin", false);
         return VIEW_PATH + "add";
     }
 

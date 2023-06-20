@@ -44,8 +44,12 @@
                 </div>
             </span>
         </div>
+        <div th:if="${duplicate}" th:text="${duplicate}"  class="text-danger">
+
+        </div>
         <button type="submit" name="addRow">Add row</button>
         <button type="submit" name="save">Save</button>
+
     </form>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
