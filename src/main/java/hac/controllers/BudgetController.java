@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hac.beans.Budget;
 import hac.beans.Category;
+import hac.beans.Expense;
 import hac.beans.repo.BudgetRepository;
 import hac.beans.repo.CategoryRepository;
 import hac.collections.BudgetList;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +70,8 @@ public class BudgetController {
     @GetMapping("/view")
     public String showBudgets(Model model, Principal principal) {
         String username = principal.getName();
-        List<Budget> budgets = budgetRepository.findByUsername(username);
+        List<Budget> budgets = budgetRepository.findAllByUsername(username);
+//        List<Budget> budgets = budgetRepository.findByUsername(username);
         model.addAttribute("budgetItems", budgets);
 
         return VIEW_PATH + "view";
@@ -192,5 +196,31 @@ public class BudgetController {
         });
         return errors;
     }
+
+    @PostMapping("/filter")
+    public String filterBudget(@RequestParam(value = "category", required = false) String category,
+                                 Model model, Principal principal) {
+        String username = principal.getName();
+
+        if (category == null || category.isEmpty()) {
+            category = null; // Set category to null to indicate searching for all categories
+        }
+
+        System.out.println("Category:     " + category);
+        List<Budget> budgets;
+       if (category != null) {
+           // Only category is specified
+           System.out.println("Category is not null");
+           budgets = budgetRepository.findAllByUsernameAndCategory(username, category);
+       } else {
+            // Neither category nor date is specified, search all expenses
+           budgets = budgetRepository.findAllByUsername(username);
+        }
+
+        model.addAttribute("budgetItems", budgets);
+        model.addAttribute("categoryValue", category);
+        return VIEW_PATH + "view";
+    }
+
 }
 

@@ -13,13 +13,30 @@
 
 <div class="container">
     <h1>Budget Page</h1>
-    <div class="filter-container">
+    <form th:method="post" th:action="@{/budget/filter}" id="filter-form">
         <label for="category-filter">Filter by Category:</label>
-        <select id="category-filter">
+        <select id="category-filter" name="category" onchange="submitForm()">
             <option value="">All</option>
-            <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
+            <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}" th:selected="${categoryValue != null && categoryValue == category.name}"></option>
         </select>
-    </div>
+
+<!--        <label for="date-filter">Filter by Date:</label>-->
+<!--        <input type="date" id="date-filter" name="date" th:value="${dateValue != null ? dateValue : ''}" onchange="submitForm()">-->
+    </form>
+
+
+    <script>
+        function submitForm() {
+            document.getElementById("filter-form").submit();
+        }
+    </script>
+<!--    <div class="filter-container">-->
+<!--        <label for="category-filter">Filter by Category:</label>-->
+<!--        <select id="category-filter">-->
+<!--            <option value="">All</option>-->
+<!--            <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>-->
+<!--        </select>-->
+<!--    </div>-->
     <table id="budget-table">
         <thead>
         <tr>
@@ -79,30 +96,30 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    // JavaScript code here
-    const categoryFilter = document.getElementById("category-filter");
-    const budgetRows = document.getElementsByClassName("budget-row");
+<!--<script>-->
+<!--    // JavaScript code here-->
+<!--    const categoryFilter = document.getElementById("category-filter");-->
+<!--    const budgetRows = document.getElementsByClassName("budget-row");-->
 
-    categoryFilter.addEventListener("change", filterBudget);
+<!--    categoryFilter.addEventListener("change", filterBudget);-->
 
-    function filterBudget() {
-        const selectedCategory = categoryFilter.value;
+<!--    function filterBudget() {-->
+<!--        const selectedCategory = categoryFilter.value;-->
 
-        Array.from(budgetRows).forEach(function (row) {
-            const categoryCell = row.getElementsByTagName("td")[0];
-            const category = categoryCell.textContent.toLowerCase();
+<!--        Array.from(budgetRows).forEach(function (row) {-->
+<!--            const categoryCell = row.getElementsByTagName("td")[0];-->
+<!--            const category = categoryCell.textContent.toLowerCase();-->
 
-            if (selectedCategory === "" || category === selectedCategory) {
-                row.style.display = "table-row";
-            } else {
-                row.style.display = "none";
-            }
-        });
-    }
+<!--            if (selectedCategory === "" || category === selectedCategory) {-->
+<!--                row.style.display = "table-row";-->
+<!--            } else {-->
+<!--                row.style.display = "none";-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
 
-    // Apply filter on page load
-    filterBudget();
-</script>
+<!--    // Apply filter on page load-->
+<!--    filterBudget();-->
+<!--</script>-->
 </body>
 </html>

@@ -118,7 +118,7 @@ public class AdminCategoryController {
         String username = budgetRepository.findById(id).get().getUsername();
         budget.setUsername(username);
         budgetRepository.save(budget);
-        model.addAttribute("budgetItems", budgetRepository.findByUsername(username));
+        model.addAttribute("budgetItems", budgetRepository.findAllByUsername(username));
         return "/user/budget/view";
     }
 
@@ -137,7 +137,7 @@ public class AdminCategoryController {
     public String deleteBudget(@RequestParam("id") Long id, Model model) {
         String username = budgetRepository.findById(id).get().getUsername();
         budgetRepository.deleteById(id);
-        List<Budget> budgets = budgetRepository.findByUsername(username);
+        List<Budget> budgets = budgetRepository.findAllByUsername(username);
         model.addAttribute("budgetItems", budgets);
         return "/user/budget/view";
     }
@@ -145,7 +145,7 @@ public class AdminCategoryController {
     @PostMapping("/budget")
     public String showBudgets(@RequestParam("userId") String username, Model model, Principal principal) {
         try {
-            List<Budget> budgets = budgetRepository.findByUsername(username);
+            List<Budget> budgets = budgetRepository.findAllByUsername(username);
             model.addAttribute("budgetItems", budgets);
             return "/user/budget/view";
         } catch (Exception e) {
