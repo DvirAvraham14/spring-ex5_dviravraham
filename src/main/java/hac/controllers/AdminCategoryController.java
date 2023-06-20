@@ -59,11 +59,19 @@ public class AdminCategoryController {
 
     @GetMapping("/categories")
     public String getAllCategories(Model model) {
+        model.addAttribute("category", new Category());
+
         return "/admin/categories";
     }
 
     @PostMapping("/categories/add")
-    public String createCategory(@ModelAttribute Category category) {
+    public String createCategory(@Valid @ModelAttribute Category category, BindingResult result,
+                                 Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("category", category); // Add the category object to the model
+            return "/admin/categories"; // Return the form view to display the errors
+        }
+
         categoryRepository.save(category);
         return "redirect:/admin/categories";
     }

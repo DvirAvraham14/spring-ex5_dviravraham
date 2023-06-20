@@ -1,15 +1,7 @@
 package hac.beans;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.security.Principal;
-import java.time.LocalDate;
-
 
 @Entity(name = "Category")
 public class Category {
@@ -17,6 +9,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty(message = "Category name is mandatory")
     private String name;
 
     public Category() {
