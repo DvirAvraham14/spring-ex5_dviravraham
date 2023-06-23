@@ -6,7 +6,6 @@ import hac.beans.Expense;
 import hac.beans.repo.BudgetRepository;
 import hac.beans.repo.CategoryRepository;
 import hac.beans.repo.ExpenseRepository;
-import hac.services.BudgetService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,9 +174,11 @@ public class AdminCategoryController {
 
 
     @PostMapping("/expense/del")
-    public String deleteBudget(@RequestParam("id") Long id) {
-        // Delete the budget item with the given ID
+    public String deleteExpense(@RequestParam("id") Long id , Model model) {
+        String username = expenseRepository.findById(id).get().getUser();
         expenseRepository.deleteById(id);
+        List<Expense> expenses = expenseRepository.findByUsername(username);
+        model.addAttribute("expenses", expenses);
         return "/user/expense/view";
     }
 

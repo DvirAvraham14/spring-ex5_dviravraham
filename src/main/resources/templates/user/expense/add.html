@@ -21,6 +21,7 @@
             <input type="hidden" th:field="*{id}" />
             <input type="hidden" th:field="*{user}" />
         </span>
+
         <div class="form-group">
             <label for="category">Category: <span class="text-danger">*</span></label>
             <select id="category" th:field="*{category}" th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''" required>

@@ -15,7 +15,7 @@
 <nav th:fragment="navbar" class="navbar navbar-expand-md navbar-dark bg-dark">
 
     <div class="container-fluid">
-        <a class="navbar-brand" href="../" th:href="@{/}">FinTrack</a>
+<!--        <a class="navbar-brand" href="../" th:href="@{/}">FinTrack</a>-->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
                 aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -23,31 +23,35 @@
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
+                    <a class="nav-link navbar-brand" href="../" th:href="@{/}">FinTrack</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
                 </li>
                 <li class="nav-item" th:unless="${#authorization.expression('isAuthenticated()')}">
-                    <a class="nav-link" th:href="@{/login}">Login</a>
+                    <a class="nav-link active" th:href="@{/login}">Login</a>
                 </li>
                 <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
-                    <a class="nav-link" th:href="@{/expense}">Expense</a>
+                    <a class="nav-link active" th:href="@{/expense}">Expense</a>
                 </li>
                 <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
-                    <a class="nav-link" th:href="@{/budget}">Budget</a>
+                    <a class="nav-link active" th:href="@{/budget}">Budget</a>
                 </li>
-<!--                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">-->
-<!--                    <a class="nav-link" th:href="@{/goal}">Goal</a>-->
-<!--                </li>-->
+                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <a class="nav-link active" th:href="@{/expense/diagram}">Graph</a>
+                </li>
                 <li class="nav-item"
                     th:if="${#authorization.expression('isAuthenticated()') and #authorization.expression('hasRole(''ADMIN'')')}">
-                    <a class="nav-link" th:href="@{/admin}">admin pages</a>
+                    <a class="nav-link active" th:href="@{/admin}">admin pages</a>
                 </li>
             </ul>
             <span class="navbar-text">
                 <th:block th:if="${#authorization.expression('isAuthenticated()')}">
                     Welcome back <span th:text="${#authentication.principal.username}"></span>
+                    <span style="margin-left: 10px;"></span> <!-- Add margin-left for spacing -->
                     <form th:action="@{/logout}" method="post" style="display:inline">
-                      <input type="hidden" value="Logout"/>
-                      <a href="javascript:" onclick="parentNode.submit();"> Logout</a>
+                        <input type="hidden" value="Logout"/>
+                        <a href="javascript:" onclick="parentNode.submit();"> Logout</a>
                     </form>
                 </th:block>
             </span>

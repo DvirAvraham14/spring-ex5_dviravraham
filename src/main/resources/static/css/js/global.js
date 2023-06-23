@@ -1,6 +1,5 @@
 const reloadBudget = (date) => {
     const _csrf = document.querySelector("meta[name='_csrf']").content;
-    const _csrf_header = document.querySelector("meta[name='_csrf_header']").content;
     fetch('/budget/getBudget', {
         method: 'POST',
         headers: {
@@ -14,8 +13,6 @@ const reloadBudget = (date) => {
     }).then((html) => {
         if (html !== "") {
             const currentDocument = document.getElementById("budgetContainer");
-            //const newDocument = new DOMParser().parseFromString(html, 'text/html');
-            //document.replaceChild(newDocument.documentElement, currentDocument);
             currentDocument.innerHTML = html;
         }
     })

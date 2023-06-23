@@ -1,6 +1,5 @@
 <div th:fragment="addBudget" th:id="budgetContainer">
     <h1>Budget Tracker</h1>
-    <!-- Add Budget Form -->
     <h2>Add Budget</h2>
 
     <form th:action="${isAdmin ? '/admin/budget/save' : '/budget/save'}" th:object="${budgetList}" method="post">
@@ -13,20 +12,20 @@
                 <input type="month"
                        onchange="reloadBudget(this.value)"
                        id="month"
-                       th:field="*{budgets[__${status.index}__].month}"/>
+                       th:field="*{budgets[__${status.index}__].month}" required/>
                 <span th:if="${#fields.hasErrors('budgets[__${status.index}__].month')}"
                       th:errors="*{budgets[__${status.index}__].month}" class="text-danger"></span>
             </div>
             <span th:fragment="budgetData" th:id="'budgetContainer' + ${status.index} ">
                 <span th:if="${status.index > 0}">
-                    <!-- Set the value as hidden input taken from the first input -->
                     <input type="hidden" th:field="*{budgets[__${status.index}__].month}"/>
                         <input type="hidden" name="id" th:field="*{budgets[__${status.index}__].id}"/>
                         <button type="submit" name="DelRow" th:value="${status.index}">delete</button>
                 </span>
+
                 <div class="form-group">
                     <label for="category">Category:</label>
-                    <select th:field="*{budgets[__${status.index}__].category}">
+                    <select id="category" th:field="*{budgets[__${status.index}__].category}" required>
                 <option value="" selected>Select a category</option>
 
                         <option th:each="category : ${categories}" th:value="${category.name}"
@@ -35,16 +34,19 @@
                     <span th:if="${#fields.hasErrors('budgets[__${status.index}__].category')}"
                           th:errors="*{budgets[__${status.index}__].category}" class="text-danger"></span>
                 </div>
+
                 <div class="form-group">
                     <label for="monthlyLimit">Monthly Limit:</label>
-                    <input type="number" th:field="*{budgets[__${status.index}__].monthlyLimit}" min="0"
-                           step="0.10" required/>
+                    <input id="monthlyLimit" type="number" th:field="*{budgets[__${status.index}__].monthlyLimit}"
+                           min="0"
+                           step="0.50" required/>
                     <span th:if="${#fields.hasErrors('budgets[__${status.index}__].monthlyLimit')}"
                           th:errors="*{budgets[__${status.index}__].monthlyLimit}" class="text-danger"></span>
                 </div>
             </span>
         </div>
-        <div th:if="${duplicate}" th:text="${duplicate}"  class="text-danger">
+
+        <div th:if="${duplicate}" th:text="${duplicate}" class="text-danger">
 
         </div>
         <button type="submit" name="addRow">Add row</button>

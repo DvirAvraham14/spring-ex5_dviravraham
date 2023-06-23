@@ -1,0 +1,22 @@
+.line {
+    fill: none;
+    stroke: #ff5722; /* Orange color */
+    stroke-width: 2px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #ccc;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    fill: #777; /* Dark gray color */
+}
+
+.axis .tick line {
+    stroke: #ccc;
+}

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hac.beans.Budget;
 import hac.beans.Category;
-import hac.beans.Expense;
 import hac.beans.repo.BudgetRepository;
 import hac.beans.repo.CategoryRepository;
 import hac.collections.BudgetList;
@@ -14,8 +13,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,10 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.security.Principal;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +73,7 @@ public class BudgetController {
 
 
     @GetMapping("/add")
-    public String showAddBudgetPage(Model model, Principal principal) {
+    public String showAddBudgetPage(Model model) {
         BudgetList budgets = new BudgetList();
         model.addAttribute("budgetList", budgets);
         return VIEW_PATH + "add";
@@ -112,7 +106,7 @@ public class BudgetController {
 
 
     @PostMapping(value = "/save", params = {"addRow"})
-    public String addRow(@Valid @ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model, Principal principal) {
+    public String addRow(@Valid @ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return VIEW_PATH + "add";
         }
@@ -126,6 +120,8 @@ public class BudgetController {
     public String delRow(@ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model,
                          @RequestParam("DelRow") int delRow) {
         if (!result.hasErrors()) {
+            if(budgets.getBudgets().get(delRow).getId() != null)
+                budgetRepository.delete(budgets.getBudgets().get(delRow));
             budgets.deleteBudget(delRow);
 
             model.addAttribute("budgetList", budgets);
@@ -156,7 +152,7 @@ public class BudgetController {
 
 
     @PostMapping("/del/{id}")
-    public String deleteBudget(@PathVariable("id") Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String deleteBudget(@PathVariable("id") Long id) {
             budgetService.deleteBudget(id);
         return "redirect:/budget/view";
     }
