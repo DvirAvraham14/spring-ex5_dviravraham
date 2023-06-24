@@ -39,6 +39,14 @@ public class BudgetController {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    // Exception handler for handling any unhandled exceptions
+    @ExceptionHandler(Exception.class)
+    public String handleException(Model model, Exception e) {
+        model.addAttribute("status", "Error");
+        model.addAttribute("message", e.getMessage());
+        return "error";
+    }
+
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
         String uri = request.getRequestURI();
@@ -65,7 +73,6 @@ public class BudgetController {
     public String showBudgets(Model model, Principal principal) {
         String username = principal.getName();
         List<Budget> budgets = budgetRepository.findAllByUsername(username);
-//        List<Budget> budgets = budgetRepository.findByUsername(username);
         model.addAttribute("budgetItems", budgets);
 
         return VIEW_PATH + "view";
@@ -158,8 +165,8 @@ public class BudgetController {
     }
 
 
-    @PostMapping("/edit/{id}")
-    public String editBudget(@PathVariable("id") Long id, Model model) {
+    @PostMapping("/edit")
+    public String editBudget(@RequestParam("id") Long id, Model model) {
         // Find the budget item with the given ID
         Budget budget = budgetRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
@@ -168,17 +175,54 @@ public class BudgetController {
     }
 
 
+//
     @PostMapping("/update")
     public String updateBudget(@Valid Budget budget, BindingResult result,
-                               Model model) {
+                               Model model, Principal principal) {
+
         if (result.hasErrors()) {
             model.addAttribute("budget", budget);
             return VIEW_PATH + "add";
         }
-        budgetRepository.save(budget);
+        System.out.println(budget.getId());
+        budget.setUsername(principal.getName());
+        Budget existingBudget = budgetRepository.findByUsernameAndCategoryAndMonth(budget.getUsername(), budget.getCategory(), budget.getMonth());
+        // Check if there is an existing budget with the same category and month but different limit
+        if(existingBudget != null && Math.abs(existingBudget.getMonthlyLimit() - budget.getMonthlyLimit()) > 0.001){
+            budgetService.deleteBudget(existingBudget.getId());
+            budgetRepository.save(budget);
+            return "redirect:/budget/view";
+        }
+        // Check if there is an existing budget with the same category and month
+        if (existingBudget != null) {
+            FieldError error = new FieldError("budget", "category", "A budget with the same category and month already exists.");
+            result.addError(error);
+            model.addAttribute("budget", budget);
+            model.addAttribute("editMode", true);
+            return VIEW_PATH + "add";
+        }
 
+        // No existing budget found, save the new budget
+//        budgetService.deleteBudget(existingBudget.getId());
+        budgetRepository.save(budget);
         return "redirect:/budget/view";
     }
+
+//
+//    @PostMapping("/update")
+//    public String updateBudget(@Valid Budget budget, BindingResult result,
+//                               Model model, Principal principal) {
+//
+//        if (result.hasErrors()) {
+//            model.addAttribute("budget", budget);
+//            return VIEW_PATH + "add";
+//        }
+//        budget.setUsername(principal.getName());
+//        System.out.println(budget.getCategory());
+//        budgetRepository.save(budget);
+//
+//        return "redirect:/budget/view";
+//    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})

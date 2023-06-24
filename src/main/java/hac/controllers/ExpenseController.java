@@ -30,6 +30,14 @@ public class ExpenseController {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    // Exception handler for handling any unhandled exceptions
+    @ExceptionHandler(Exception.class)
+    public String handleException(Model model, Exception e) {
+        model.addAttribute("status", "Error");
+        model.addAttribute("message", e.getMessage());
+        return "error";
+    }
+
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
         String uri = request.getRequestURI();
@@ -43,8 +51,7 @@ public class ExpenseController {
 
     @ModelAttribute("categories")
     public List<Category> getCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        return categories;
+        return categoryRepository.findAll();
     }
 
     @GetMapping("")
@@ -56,16 +63,16 @@ public class ExpenseController {
     public String showExpenses(Model model, Principal principal) {
         String username = principal.getName();
         List<Expense> expenses = expenseRepository.findByUsername(username);
-        List<Category> categories = categoryRepository.findAll();
-        model.addAttribute("categories", categories);
+//        List<Category> categories = categoryRepository.findAll();
+//        model.addAttribute("categories", categories);
         model.addAttribute("expenses", expenses);
         return VIEW_PATH + "view";
     }
 
     @GetMapping("/add")
     public String showAddExpensePageMain(Expense expense, Model model) {
-        List<Category> categories = categoryRepository.findAll();
-        model.addAttribute("categories", categories);
+//        List<Category> categories = categoryRepository.findAll();
+//        model.addAttribute("categories", categories);
         return VIEW_PATH + "add";
     }
 
@@ -87,17 +94,6 @@ public class ExpenseController {
             return VIEW_PATH + "diagram";
         }
 
-        @PostMapping("/diagramMap")
-        public String diagramExpense( Model model, Principal principal) {
-            String username = principal.getName();
-            List<Expense> expenses = expenseRepository.findAllByUsername(username);
-            model.addAttribute("expenses", expenses.toArray());
-            System.out.println("expenses: " + expenses.size());
-           // return "redirect:/expense/diagram";
-            return VIEW_PATH + "diagram";
-        }
-
-
 
     @PostMapping("/del")
     public String deleteBudget(@RequestParam("id") Long id) {
@@ -111,7 +107,6 @@ public class ExpenseController {
         // Find the budget item with the given ID
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
-        System.out.println("expense category : " + expense.getCategory());
         model.addAttribute("expense", expense);
         return  VIEW_PATH + "add";
     }
@@ -121,8 +116,9 @@ public class ExpenseController {
         expense.setUser(principal.getName());
         if (result.hasErrors()) {
             model.addAttribute("expense", expense);
-            return  VIEW_PATH + "view";
+            return  VIEW_PATH + "edit";
         }
+        System.out.println(expense.getId());
         expenseRepository.save(expense);
         return "redirect:/expense/view";
     }
@@ -152,7 +148,6 @@ public class ExpenseController {
             expenses = expenseRepository.findAllByUsername(username);
         }
 
-        List<Category> categories = categoryRepository.findAll();
         model.addAttribute("dateValue", date);
         model.addAttribute("categoryValue", category);
         model.addAttribute("expenses", expenses);

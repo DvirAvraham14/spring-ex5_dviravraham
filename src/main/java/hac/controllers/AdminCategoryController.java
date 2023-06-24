@@ -35,6 +35,14 @@ public class AdminCategoryController {
     @Autowired
     private ExpenseRepository expenseRepository;
 
+    // Exception handler for handling any unhandled exceptions
+    @ExceptionHandler(Exception.class)
+    public String handleException(Model model, Exception e) {
+        model.addAttribute("status", "Error");
+        model.addAttribute("message", e.getMessage());
+        return "error";
+    }
+
     @GetMapping("")
     public String showAdminPage(Model model) {
         return "/admin/index";
@@ -52,7 +60,7 @@ public class AdminCategoryController {
     }
 
     @ModelAttribute("isAdmin")
-    public boolean addIsAdminModelAttribute(){
+    public boolean addIsAdminModelAttribute() {
         return true;
     }
 
@@ -116,7 +124,7 @@ public class AdminCategoryController {
     //==================================================================================================
 
     @PostMapping("/budget/update")
-    public String updateBudget(@RequestParam("id") Long id,@Valid Budget budget, BindingResult result,
+    public String updateBudget(@RequestParam("id") Long id, @Valid Budget budget, BindingResult result,
                                Model model, Principal principal) {
         if (result.hasErrors()) {
             model.addAttribute("error", "Error");
@@ -151,19 +159,13 @@ public class AdminCategoryController {
 
     @PostMapping("/budget")
     public String showBudgets(@RequestParam("userId") String username, Model model, Principal principal) {
-        try {
-            List<Budget> budgets = budgetRepository.findAllByUsername(username);
-            model.addAttribute("budgetItems", budgets);
-            return "/user/budget/view";
-        } catch (Exception e) {
-            model.addAttribute("status", "Error");
-            model.addAttribute("message", e.getMessage());
-            return "error";
-        }
+        List<Budget> budgets = budgetRepository.findAllByUsername(username);
+        model.addAttribute("budgetItems", budgets);
+        return "/user/budget/view";
     }
 
 
-   //=================================================================
+    //=================================================================
 
     @PostMapping("/expense")
     public String showExpenses(@RequestParam("userId") String username, Model model) {
@@ -174,7 +176,7 @@ public class AdminCategoryController {
 
 
     @PostMapping("/expense/del")
-    public String deleteExpense(@RequestParam("id") Long id , Model model) {
+    public String deleteExpense(@RequestParam("id") Long id, Model model) {
         String username = expenseRepository.findById(id).get().getUser();
         expenseRepository.deleteById(id);
         List<Expense> expenses = expenseRepository.findByUsername(username);
@@ -188,14 +190,14 @@ public class AdminCategoryController {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
         model.addAttribute("expense", expense);
-        return  "/user/expense/add";
+        return "/user/expense/add";
     }
 
     @PostMapping("/expense/update")
     public String updateExpense(@Valid Expense expense, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("expense", expense);
-            return  "user/expense/add";
+            return "user/expense/add";
         }
         expenseRepository.save(expense);
         List<Expense> expenses = expenseRepository.findByUsername(expense.getUser());

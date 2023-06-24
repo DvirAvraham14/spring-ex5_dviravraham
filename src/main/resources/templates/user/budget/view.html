@@ -55,8 +55,12 @@
             <td>
                 <div class="button-container">
                     <span th:if="${!isAdmin}">
-                        <form th:action="@{/budget/edit/{id}(id=${budgetItem.id})}" method="post">
-                        <input type="hidden" name="_method" value="DELETE"/>
+                        <form th:action="@{/budget/edit}" method="post">
+<!--                        <input type="hidden" name="_method" value="DELETE"/>-->
+<!--                        <button type="submit" class="btn btn-link">-->
+<!--                            <i class="fas fa-edit"></i>-->
+<!--                        </button>-->
+                            <input th:type="hidden" th:name="id" th:value="${budgetItem.id}">
                         <button type="submit" class="btn btn-link">
                             <i class="fas fa-edit"></i>
                         </button>
