@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Controller
@@ -30,13 +29,6 @@ public class ExpenseController {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // Exception handler for handling any unhandled exceptions
-    @ExceptionHandler(Exception.class)
-    public String handleException(Model model, Exception e) {
-        model.addAttribute("status", "Error");
-        model.addAttribute("message", e.getMessage());
-        return "error";
-    }
 
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
@@ -63,16 +55,12 @@ public class ExpenseController {
     public String showExpenses(Model model, Principal principal) {
         String username = principal.getName();
         List<Expense> expenses = expenseRepository.findByUsername(username);
-//        List<Category> categories = categoryRepository.findAll();
-//        model.addAttribute("categories", categories);
         model.addAttribute("expenses", expenses);
         return VIEW_PATH + "view";
     }
 
     @GetMapping("/add")
     public String showAddExpensePageMain(Expense expense, Model model) {
-//        List<Category> categories = categoryRepository.findAll();
-//        model.addAttribute("categories", categories);
         return VIEW_PATH + "add";
     }
 

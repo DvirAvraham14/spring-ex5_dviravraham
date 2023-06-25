@@ -35,18 +35,8 @@ public class AdminCategoryController {
     @Autowired
     private ExpenseRepository expenseRepository;
 
-    // Exception handler for handling any unhandled exceptions
-    @ExceptionHandler(Exception.class)
-    public String handleException(Model model, Exception e) {
-        model.addAttribute("status", "Error");
-        model.addAttribute("message", e.getMessage());
-        return "error";
-    }
-
     @GetMapping("")
-    public String showAdminPage(Model model) {
-        return "/admin/index";
-    }
+    public String showAdminPage() {return "/admin/index";}
 
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
@@ -125,7 +115,7 @@ public class AdminCategoryController {
 
     @PostMapping("/budget/update")
     public String updateBudget(@RequestParam("id") Long id, @Valid Budget budget, BindingResult result,
-                               Model model, Principal principal) {
+                               Model model) {
         if (result.hasErrors()) {
             model.addAttribute("error", "Error");
             return "/user/budget/add";
@@ -158,7 +148,7 @@ public class AdminCategoryController {
     }
 
     @PostMapping("/budget")
-    public String showBudgets(@RequestParam("userId") String username, Model model, Principal principal) {
+    public String showBudgets(@RequestParam("userId") String username, Model model) {
         List<Budget> budgets = budgetRepository.findAllByUsername(username);
         model.addAttribute("budgetItems", budgets);
         return "/user/budget/view";

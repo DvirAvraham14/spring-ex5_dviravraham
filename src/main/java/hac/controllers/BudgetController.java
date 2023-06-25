@@ -39,14 +39,6 @@ public class BudgetController {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // Exception handler for handling any unhandled exceptions
-    @ExceptionHandler(Exception.class)
-    public String handleException(Model model, Exception e) {
-        model.addAttribute("status", "Error");
-        model.addAttribute("message", e.getMessage());
-        return "error";
-    }
-
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
         String uri = request.getRequestURI();
@@ -176,39 +168,6 @@ public class BudgetController {
 
 
 //
-    @PostMapping("/update")
-    public String updateBudget(@Valid Budget budget, BindingResult result,
-                               Model model, Principal principal) {
-
-        if (result.hasErrors()) {
-            model.addAttribute("budget", budget);
-            return VIEW_PATH + "add";
-        }
-        System.out.println(budget.getId());
-        budget.setUsername(principal.getName());
-        Budget existingBudget = budgetRepository.findByUsernameAndCategoryAndMonth(budget.getUsername(), budget.getCategory(), budget.getMonth());
-        // Check if there is an existing budget with the same category and month but different limit
-        if(existingBudget != null && Math.abs(existingBudget.getMonthlyLimit() - budget.getMonthlyLimit()) > 0.001){
-            budgetService.deleteBudget(existingBudget.getId());
-            budgetRepository.save(budget);
-            return "redirect:/budget/view";
-        }
-        // Check if there is an existing budget with the same category and month
-        if (existingBudget != null) {
-            FieldError error = new FieldError("budget", "category", "A budget with the same category and month already exists.");
-            result.addError(error);
-            model.addAttribute("budget", budget);
-            model.addAttribute("editMode", true);
-            return VIEW_PATH + "add";
-        }
-
-        // No existing budget found, save the new budget
-//        budgetService.deleteBudget(existingBudget.getId());
-        budgetRepository.save(budget);
-        return "redirect:/budget/view";
-    }
-
-//
 //    @PostMapping("/update")
 //    public String updateBudget(@Valid Budget budget, BindingResult result,
 //                               Model model, Principal principal) {
@@ -218,11 +177,45 @@ public class BudgetController {
 //            return VIEW_PATH + "add";
 //        }
 //        budget.setUsername(principal.getName());
-//        System.out.println(budget.getCategory());
-//        budgetRepository.save(budget);
+//        Budget existingBudget = budgetRepository.findByUsernameAndCategoryAndMonth(budget.getUsername(), budget.getCategory(), budget.getMonth());
 //
+//        // Check if there is an existing budget with the same category and month but different limit
+//        if(existingBudget != null && Math.abs(existingBudget.getMonthlyLimit() - budget.getMonthlyLimit()) > 0.001){
+//            existingBudget.setMonthlyLimit(budget.getMonthlyLimit());
+//            budgetRepository.save(existingBudget);
+//            return "redirect:/budget/view";
+//        }
+//        System.out.println(existingBudget.getCategory());
+//        // Check if there is an existing budget with the same category and month
+//        if (existingBudget != null) {
+//            FieldError error = new FieldError("budget", "category", "A budget with the same category and month already exists.");
+//            result.addError(error);
+//            model.addAttribute("budget", budget);
+//            model.addAttribute("editMode", true);
+//            return VIEW_PATH + "add";
+//        }
+//
+//        // No existing budget found, save the new budget
+////        budgetService.deleteBudget(existingBudget.getId());
+//        budgetRepository.save(budget);
 //        return "redirect:/budget/view";
 //    }
+
+
+    @PostMapping("/update")
+    public String updateBudget(@Valid Budget budget, BindingResult result,
+                               Model model, Principal principal) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("budget", budget);
+            return VIEW_PATH + "add";
+        }
+        budget.setUsername(principal.getName());
+        System.out.println(budget.getCategory());
+        budgetRepository.save(budget);
+
+        return "redirect:/budget/view";
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})

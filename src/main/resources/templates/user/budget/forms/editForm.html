@@ -1,19 +1,16 @@
 <div th:fragment="editBudget">
     <h1>Budget Tracker</h1>
     <h3>Edit Budget</h3>
-    <!--    <form th:action="${'/budget/update'}" th:object="${budget}" method="post">-->
     <form th:action="${isAdmin ? '/admin/budget/update' : '/budget/update'}" th:object="${budget}" method="post">
-
         <input type="hidden" th:field="*{id}"/>
         <input type="hidden" th:value="${username}"/>
         <div class="form-group">
-            <label for="month">Month:</label>
+            <label for="month">Month: <span class="text-danger">*</span></label>
             <input type="month" id="month" th:name="month" th:value="${budget.month}"/>
         </div>
         <span id="budgetContainer">
-
-                <div class="form-group">
-                  <label for="category">Category:</label>
+            <div class="form-group">
+                <label for="category">Category: <span class="text-danger">*</span></label>
                     <select id="category" th:field="*{category}"
                             th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''" required>
                         <option value="" selected>Select a category</option>
@@ -23,12 +20,12 @@
                       <div th:if="${#fields.hasErrors('category')}" class="invalid-feedback">
                               <span th:each="err : ${#fields.errors('category')}" th:text="${err}"></span>
                           </div>
-                </div>
-                        <div class="form-group">
-                            <label for="monthlyLimit">Monthly Limit:</label>
-                            <input type="number" id="monthlyLimit" th:name="monthlyLimit"
-                                   th:value="${budget.monthlyLimit}" min="0" step="0.10"/>
-                        </div>
+            </div>
+            <div class="form-group">
+                <label for="monthlyLimit">Monthly Limit: <span class="text-danger">*</span></label>
+                <input type="number" id="monthlyLimit" th:name="monthlyLimit"
+                       th:value="${budget.monthlyLimit}" min="0" step="0.10"/>
+            </div>
         </span>
         <button type="submit">save</button>
     </form>

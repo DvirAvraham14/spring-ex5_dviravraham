@@ -1,7 +1,6 @@
 package hac.beans.repo;
 
 import hac.beans.Expense;
-import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

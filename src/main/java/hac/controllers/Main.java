@@ -1,23 +1,15 @@
 package hac.controllers;
 
-import hac.beans.Goal;
-import hac.beans.repo.GoalRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
-/**
- * this is a test controller, delete/replace it when you start working on your project
- */
+
 @Controller
 public class Main {
-
-    @Autowired
-    private GoalRepository goalRepository;
 
     /**
      * Home page.
@@ -32,20 +24,25 @@ public class Main {
     }
 
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login() {
         return "login";
     }
 
 
-    @PostMapping("/goal")
-    public String addGoal(Goal goal) {
-        goalRepository.save(goal);
-        return "Goal";
+    @RequestMapping("/403")
+    public String forbidden() {
+        return "403";
     }
 
-    @GetMapping("/goal")
-    public Iterable<Goal> getGoals() {
-        return goalRepository.findAll();
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleException(Exception ex, Model model) {
+        model.addAttribute("status", "Error");
+        String errorMessage = (ex.getMessage() != null ? ex.getMessage() : "Unknown error");
+        System.out.println(errorMessage);
+        model.addAttribute("message", errorMessage);
+        return "error";
     }
+
 }
 
