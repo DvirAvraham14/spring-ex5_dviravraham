@@ -27,6 +27,7 @@
                        th:value="${budget.monthlyLimit}" min="0" step="0.10"/>
             </div>
         </span>
+        <div th:if="${duplicate}" th:text="${duplicate}" class="alert alert-danger text-danger"></div>
         <button type="submit">save</button>
     </form>
 </div>

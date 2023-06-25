@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -42,16 +43,16 @@ public class BudgetController {
     @ModelAttribute("editMode")
     public boolean addEditModeModelAttribute(HttpServletRequest request) {
         String uri = request.getRequestURI();
-        return uri.endsWith("/add") ? false : uri.contains("/edit");
+        return uri.endsWith("/add") ? false : (uri.contains("/edit") || uri.contains("/update"));
     }
 
     @ModelAttribute("isAdmin")
-    public boolean addIsAdminModelAttribute(){
+    public boolean addIsAdminModelAttribute() {
         return false;
     }
 
     @ModelAttribute("categories")
-    public List<Category> addCategoriesModelAttribute(){
+    public List<Category> addCategoriesModelAttribute() {
         return categoryRepository.findAll();
     }
 
@@ -119,7 +120,7 @@ public class BudgetController {
     public String delRow(@ModelAttribute("budgetList") BudgetList budgets, BindingResult result, Model model,
                          @RequestParam("DelRow") int delRow) {
         if (!result.hasErrors()) {
-            if(budgets.getBudgets().get(delRow).getId() != null)
+            if (budgets.getBudgets().get(delRow).getId() != null)
                 budgetRepository.delete(budgets.getBudgets().get(delRow));
             budgets.deleteBudget(delRow);
 
@@ -139,11 +140,10 @@ public class BudgetController {
         }
         try {
             budgetService.saveBudgets(budgets, principal.getName(), budgets.getBudgets().get(0).getMonth());
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             model.addAttribute("duplicate", "Duplicate entry for category and month");
             return VIEW_PATH + "add";
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return VIEW_PATH + "add";
         }
         return "redirect:/budget/view";
@@ -152,7 +152,7 @@ public class BudgetController {
 
     @PostMapping("/del/{id}")
     public String deleteBudget(@PathVariable("id") Long id) {
-            budgetService.deleteBudget(id);
+        budgetService.deleteBudget(id);
         return "redirect:/budget/view";
     }
 
@@ -167,41 +167,6 @@ public class BudgetController {
     }
 
 
-//
-//    @PostMapping("/update")
-//    public String updateBudget(@Valid Budget budget, BindingResult result,
-//                               Model model, Principal principal) {
-//
-//        if (result.hasErrors()) {
-//            model.addAttribute("budget", budget);
-//            return VIEW_PATH + "add";
-//        }
-//        budget.setUsername(principal.getName());
-//        Budget existingBudget = budgetRepository.findByUsernameAndCategoryAndMonth(budget.getUsername(), budget.getCategory(), budget.getMonth());
-//
-//        // Check if there is an existing budget with the same category and month but different limit
-//        if(existingBudget != null && Math.abs(existingBudget.getMonthlyLimit() - budget.getMonthlyLimit()) > 0.001){
-//            existingBudget.setMonthlyLimit(budget.getMonthlyLimit());
-//            budgetRepository.save(existingBudget);
-//            return "redirect:/budget/view";
-//        }
-//        System.out.println(existingBudget.getCategory());
-//        // Check if there is an existing budget with the same category and month
-//        if (existingBudget != null) {
-//            FieldError error = new FieldError("budget", "category", "A budget with the same category and month already exists.");
-//            result.addError(error);
-//            model.addAttribute("budget", budget);
-//            model.addAttribute("editMode", true);
-//            return VIEW_PATH + "add";
-//        }
-//
-//        // No existing budget found, save the new budget
-////        budgetService.deleteBudget(existingBudget.getId());
-//        budgetRepository.save(budget);
-//        return "redirect:/budget/view";
-//    }
-
-
     @PostMapping("/update")
     public String updateBudget(@Valid Budget budget, BindingResult result,
                                Model model, Principal principal) {
@@ -210,9 +175,16 @@ public class BudgetController {
             model.addAttribute("budget", budget);
             return VIEW_PATH + "add";
         }
-        budget.setUsername(principal.getName());
-        System.out.println(budget.getCategory());
-        budgetRepository.save(budget);
+        try {
+            budget.setUsername(principal.getName());
+            budgetService.saveBudget(budget);
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("budget", budget);
+            model.addAttribute("duplicate", "Duplicate entry for category and month");
+            return VIEW_PATH + "add";
+        } catch (Exception e) {
+            return VIEW_PATH + "add";
+        }
 
         return "redirect:/budget/view";
     }
@@ -232,7 +204,7 @@ public class BudgetController {
 
     @PostMapping("/filter")
     public String filterBudget(@RequestParam(value = "category", required = false) String category,
-                                 Model model, Principal principal) {
+                               Model model, Principal principal) {
         String username = principal.getName();
 
         if (category == null || category.isEmpty()) {
@@ -241,13 +213,13 @@ public class BudgetController {
 
         System.out.println("Category:     " + category);
         List<Budget> budgets;
-       if (category != null) {
-           // Only category is specified
-           System.out.println("Category is not null");
-           budgets = budgetRepository.findAllByUsernameAndCategory(username, category);
-       } else {
+        if (category != null) {
+            // Only category is specified
+            System.out.println("Category is not null");
+            budgets = budgetRepository.findAllByUsernameAndCategory(username, category);
+        } else {
             // Neither category nor date is specified, search all expenses
-           budgets = budgetRepository.findAllByUsername(username);
+            budgets = budgetRepository.findAllByUsername(username);
         }
 
         model.addAttribute("budgetItems", budgets);
