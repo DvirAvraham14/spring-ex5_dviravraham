@@ -18,6 +18,11 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
+/*
+    * This class represents a controller for the expense page.
+    * It is used to display the user's expenses list and to add, edit and delete expenses.
+ */
+
 @Controller
 @RequestMapping("/expense")
 public class ExpenseController {
@@ -37,7 +42,7 @@ public class ExpenseController {
     }
 
     @ModelAttribute("isAdmin")
-    public boolean addIsAdminModelAttribute(){
+    public boolean addIsAdminModelAttribute() {
         return false;
     }
 
@@ -74,13 +79,13 @@ public class ExpenseController {
         return "redirect:/expense/view";
     }
 
-        @GetMapping("/diagram")
-        public String getDiagramExpense( Model model, Principal principal) {
-            String username = principal.getName();
-            List<Expense> expenses = expenseRepository.findAllByUsername(username);
-            model.addAttribute("expenses", expenses);
-            return VIEW_PATH + "diagram";
-        }
+    @GetMapping("/diagram")
+    public String getDiagramExpense(Model model, Principal principal) {
+        String username = principal.getName();
+        List<Expense> expenses = expenseRepository.findAllByUsername(username);
+        model.addAttribute("expenses", expenses);
+        return VIEW_PATH + "diagram";
+    }
 
 
     @PostMapping("/del")
@@ -96,7 +101,7 @@ public class ExpenseController {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid budget id: " + id));
         model.addAttribute("expense", expense);
-        return  VIEW_PATH + "add";
+        return VIEW_PATH + "add";
     }
 
     @PostMapping("/update")
@@ -104,7 +109,7 @@ public class ExpenseController {
         expense.setUser(principal.getName());
         if (result.hasErrors()) {
             model.addAttribute("expense", expense);
-            return  VIEW_PATH + "edit";
+            return VIEW_PATH + "edit";
         }
         System.out.println(expense.getId());
         expenseRepository.save(expense);

@@ -9,13 +9,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/*
+    * This class represents a service for the budget page.
+    * It is used to save, get and delete budgets.
+    * It uses Transactional annotation to ensure that all the operations are done in a single transaction.
+ */
+
 @Service
 public class BudgetService {
 
     @Autowired
     private BudgetRepository budgetRepository;
 
-
+    // Save the budgets for a specific month for a specific user.
     @Transactional
     public void saveBudgets(BudgetList budgets, String username, String month) {
         try {

@@ -6,6 +6,11 @@ import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+    * This class represents a list of budgets.
+    * It is used to display the budgets for a specific month.
+ */
+
 public class BudgetList {
 
     @Valid

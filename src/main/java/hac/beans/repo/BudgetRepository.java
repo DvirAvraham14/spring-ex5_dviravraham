@@ -4,6 +4,7 @@ import hac.beans.Budget;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
+
 public interface BudgetRepository extends JpaRepository<Budget, Long> {
 
     List<Budget> findAllByUsernameAndCategory(String username, String category);
@@ -12,5 +13,4 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
 
     List<Budget> findAllByUsername(String username);
 
-    Budget findByUsernameAndCategoryAndMonth(String username, String category, String month);
 }

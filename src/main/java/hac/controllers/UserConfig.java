@@ -13,12 +13,18 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-
+/*
+    * This class represents a configuration for the user.
+    * It is used to create users and to set their roles.
+    * It also sets the password encoder.
+    * It also sets the security filter chain.
+    * It also sets the logout configuration.
+ */
 @Configuration
 public class UserConfig {
 
 
-
+    // Create users and set their roles
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder bCryptPasswordEncoder) {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -46,7 +52,7 @@ public class UserConfig {
         return new BCryptPasswordEncoder();
     }
 
-
+    // Set the security filter chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http

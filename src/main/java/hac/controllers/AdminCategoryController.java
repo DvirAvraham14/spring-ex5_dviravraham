@@ -16,11 +16,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/*
+    * This class represents a controller for the admin category page.
+    * It is used to display the categories and to add, edit and delete categories.
+    * It is also used to display the user's expenses or budgets list.
+ */
 
 @Controller
 @RequestMapping("/admin")

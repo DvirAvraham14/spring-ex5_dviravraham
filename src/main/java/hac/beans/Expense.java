@@ -6,6 +6,12 @@ import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
+/*
+    * This class represents an expense for a specific user.
+    * It is used to limit the amount of money that can be spent on a category in a month.
+    * It is also used to display the budget for a specific category in a specific month.
+ */
+
 @Entity
 @Table(name = "expense")
 public class Expense {

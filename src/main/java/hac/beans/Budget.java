@@ -8,7 +8,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Objects;
 
-
+/*
+    * This class represents a budget for a specific category for a specific month.
+    * It is used to limit the amount of money that can be spent on a category in a month.
+    * It is also used to display the budget for a specific category in a specific month.
+ */
 @Entity
 @Table(name = "budgets", uniqueConstraints = { @UniqueConstraint(name="Checking", columnNames = {"username", "category", "month"})})
 public class Budget {
@@ -95,6 +99,10 @@ public class Budget {
         this.month = month;
     }
 
+    /*
+        * This method is used to compare two budgets.
+        * Two budgets are equal if they have the same username, month and category.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

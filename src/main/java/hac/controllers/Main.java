@@ -7,13 +7,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
-
+/*
+    * This class represents a controller for the main page.
+    * It is used to display the main page and the login page.
+    * It also handles the 403 error page.
+ */
 @Controller
 public class Main {
 
-    /**
-     * Home page.
-     */
     @GetMapping("/")
     public String index(Model model, Principal principal) {
         if (principal != null) {

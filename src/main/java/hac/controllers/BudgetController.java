@@ -26,6 +26,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+    * This class represents a controller for the budget page.
+    * It is used to display the user's budgets list and to add, edit and delete budgets.
+ */
+
 @Controller
 @RequestMapping("/budget")
 public class BudgetController {
